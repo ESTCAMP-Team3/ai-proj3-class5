@@ -1,0 +1,18 @@
+.*
+._*
+.DS_Store
+~$
+
+# 예외: git 관련 파일은 무시하지 않음
+!.gitignore
+!.gitattributes
+
+
+# large outputs
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.flv
+*.wmv
+
