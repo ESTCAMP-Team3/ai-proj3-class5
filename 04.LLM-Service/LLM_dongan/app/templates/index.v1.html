@@ -1,0 +1,113 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Camera Test</title>
+  <style>
+    /* 전면 카메라 미러링(선택) */
+    #preview.mirror { transform: scaleX(-1); }
+  </style>
+</head>
+<body>
+  <div>
+    <button id="btnStart">카메라 시작</button>
+    <button id="btnFront">전면</button>
+    <button id="btnBack">후면</button>
+    <select id="cameraSelect"></select>
+    <button id="btnSnap">스냅샷 업로드</button>
+  </div>
+
+  <video id="preview" autoplay playsinline muted></video>
+  <canvas id="canvas" hidden></canvas>
+
+  <script>
+    let stream, track;
+
+    async function listCameras() {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videos = devices.filter(d => d.kind === 'videoinput');
+      const sel = document.getElementById('cameraSelect');
+      sel.innerHTML = '';
+      videos.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = v.deviceId;
+        opt.textContent = v.label || `camera ${sel.length + 1}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    async function startCamera(constraints) {
+      // 기존 스트림 정리
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      stream = await navigator.mediaDevices.getUserMedia({
+        video: constraints,
+        audio: false
+      });
+      track = stream.getVideoTracks()[0];
+      const video = document.getElementById('preview');
+      video.srcObject = stream;
+
+      // 전면이면 미러링
+      if (constraints.facingMode === 'user') video.classList.add('mirror');
+      else video.classList.remove('mirror');
+
+      await listCameras();
+      // 현재 사용 중인 deviceId 선택 표시
+      const settings = track.getSettings();
+      if (settings.deviceId) {
+        const sel = document.getElementById('cameraSelect');
+        sel.value = settings.deviceId;
+      }
+    }
+
+    document.getElementById('btnStart').onclick = async () => {
+      // iOS는 버튼 같은 사용자 제스처 후에만 허용됨
+      try {
+        await startCamera({ facingMode: 'user', width: {ideal: 1280}, height: {ideal: 720}, frameRate: {ideal: 30} });
+      } catch (e) {
+        alert('카메라 시작 실패: ' + e.message);
+      }
+    }
+
+    document.getElementById('btnFront').onclick = () =>
+      startCamera({ facingMode: 'user' });
+
+    document.getElementById('btnBack').onclick = () =>
+      startCamera({ facingMode: { exact: 'environment' } }).catch(() =>
+        // exact가 실패하면 힌트(ideal)로 재시도
+        startCamera({ facingMode: 'environment' })
+      );
+
+    document.getElementById('cameraSelect').onchange = (e) => {
+      const id = e.target.value;
+      startCamera({ deviceId: { exact: id } });
+    };
+
+    document.getElementById('btnSnap').onclick = async () => {
+      if (!stream) return alert('먼저 카메라를 시작하세요.');
+      const video = document.getElementById('preview');
+      const canvas = document.getElementById('canvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0);
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.9));
+
+      const form = new FormData();
+      form.append('file', blob, 'frame.jpg');
+      const res = await fetch('/upload', { method: 'POST', body: form });
+      if (!res.ok) alert('업로드 실패'); else alert('업로드 성공');
+    };
+
+    // (선택) 지원하면 토치/줌 같은 제어 시도
+    async function tryTorch(on=true) {
+      try {
+        const supported = track.getCapabilities?.() || {};
+        if (supported.torch) {
+          await track.applyConstraints({ advanced: [{ torch: on }] });
+        }
+      } catch (_) {}
+    }
+  </script>
+</body>
+</html>

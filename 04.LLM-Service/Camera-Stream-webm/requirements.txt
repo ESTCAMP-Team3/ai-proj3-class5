@@ -1,0 +1,6 @@
+Flask==3.0.3
+Werkzeug==3.0.3
+watchdog==4.0.1
+opencv-python==4.10.0.84
+mediapipe==0.10.14
+requests==2.32.3

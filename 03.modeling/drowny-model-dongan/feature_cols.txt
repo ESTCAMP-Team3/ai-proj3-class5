@@ -1,0 +1,6 @@
+EAR
+MAR
+yawn_rate_per_min
+blink_rate_per_min
+avg_blink_dur_sec
+longest_eye_closure_sec

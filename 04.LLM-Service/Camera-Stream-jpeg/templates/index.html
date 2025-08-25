@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JPEG Frame Uploader (640x480 @ 24fps)</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
+    .row { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+    video, canvas { width: 320px; height: 240px; background:#000; }
+    button { padding:8px 14px; border:1px solid #aaa; border-radius:8px; cursor:pointer; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#e8eefc; border:1px solid #cad6ff; margin-left:8px; }
+    #log { white-space: pre-wrap; background:#f7f7f7; padding:8px; border:1px solid #ddd; border-radius:8px; margin-top:12px; max-height:220px; overflow:auto; }
+    label { display:block; margin-top:8px; }
+    input[type=range] { width:220px; vertical-align:middle; }
+  </style>
+</head>
+<body>
+  <h2>브라우저 → Flask (JPEG 프레임 전송)</h2>
+
+  <div class="row">
+    <div>
+      <video id="preview" autoplay playsinline muted></video>
+      <canvas id="stage" width="640" height="480" style="display:none;"></canvas>
+    </div>
+    <div>
+      <div>
+        <label>카메라 선택</label>
+        <select id="cameraSelect"></select>
+        <span class="pill" id="statFps">24 fps</span>
+      </div>
+      <div>
+        <label>JPEG 품질: <span id="qLabel">0.7</span></label>
+        <input id="qRange" type="range" min="0.4" max="0.95" step="0.05" value="0.7" />
+      </div>
+      <div style="margin-top:8px;">
+        <button id="btnStart">▶ 시작</button>
+        <button id="btnStop" disabled>■ 정지</button>
+      </div>
+      <div style="margin-top:8px;">
+        <small>세션ID: <code id="sid"></code> · 전송 프레임: <code id="sent">0</code></small>
+      </div>
+      <div style="margin-top:8px;">
+        <small>640×480, 목표 24fps · 전면 카메라 우선</small>
+      </div>
+    </div>
+  </div>
+
+  <div id="log"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

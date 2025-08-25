@@ -1,0 +1,21 @@
+{
+  "topic": "sess-igjk67gw-mep4nsua",
+  "frame": 280,
+  "source_idx": 140,
+  "timestamp_ms": 1756017746521,
+  "rel_time_sec": 9.3,
+  "metrics": {
+    "label_name": "eyes_state/closed",
+    "EAR": 0.1403689109034279,
+    "MAR": 0.0008314565662647845,
+    "yawn_rate_per_min": 0.0,
+    "blink_rate_per_min": 0.0,
+    "avg_blink_dur_sec": NaN,
+    "longest_eye_closure_sec": NaN,
+    "ear_left": 0.1364123881617213,
+    "ear_right": 0.1443254336451345,
+    "ear_mean": 0.1403689109034279,
+    "mar": 0.0008314565662647845,
+    "face_found": true
+  }
+}

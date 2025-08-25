@@ -1,0 +1,53 @@
+
+{% extends 'drowny_service.html' %}
+{% block extra_head %}
+  <style>
+    .setup-card{background:#111;border:1px solid #333;padding:12px;border-radius:12px;margin-bottom:12px}
+    video,canvas{max-width:100%;border-radius:8px;background:#000}
+    .controls{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  </style>
+{% endblock %}
+{% block body_pre %}
+<div class="setup-card">
+  <h3>웹카메라 스트리밍 (전송 준비)</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+    <div>
+      <video id="localVideo" autoplay playsinline muted></video>
+      <div class="controls">
+        <label>FPS <input id="fps" type="number" min="1" max="30" value="24"></label>
+        <label>Quality <input id="quality" type="number" min="0.1" max="1" step="0.1" value="0.85"></label>
+        <button id="btnStart" class="btn">서비스 시작</button>
+      </div>
+      <div id="setupStatus" style="color:#9aa"></div>
+    </div>
+    <div>
+      <canvas id="previewCanvas"></canvas>
+      <div style="color:#9aa">미리보기 (업로드 프레임)</div>
+    </div>
+  </div>
+</div>
+<script src="{{ url_for('static', filename='js/uploader.js') }}"></script>
+<script>
+  (async function(){
+    const uploader = window.DrownyUploader;
+    const video = document.getElementById('localVideo');
+    const fps = document.getElementById('fps');
+    const q = document.getElementById('quality');
+    const btn = document.getElementById('btnStart');
+    const stat = document.getElementById('setupStatus');
+    const preview = document.getElementById('previewCanvas');
+    try {
+      await uploader.init(video);
+      stat.textContent = '카메라 준비 완료';
+    } catch(e){ stat.textContent = '카메라 오류: ' + e.message; }
+    uploader.attachPreviewCanvas(preview);
+    btn.addEventListener('click', async ()=>{
+      uploader.setFps(fps.value);
+      uploader.setQuality(q.value);
+      await uploader.start();
+      // drowny service 본문으로 스크롤 이동(동일 템플릿 기반)
+      document.getElementById('stageArea')?.scrollIntoView({behavior:'smooth'});
+    });
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{
+  "project": "drowny",
+  "version": "v1",
+  "window_sec": 5.0,
+  "hop_sec": 1.0,
+  "sampling_hz": 30.0,
+  "label_map": {
+    "0": "awake",
+    "1": "early_drowsy",
+    "2": "drowsy",
+    "3": "very_drowsy"
+  },
+  "feature_names": [
+    "EAR",
+    "MAR",
+    "yawn_rate_per_min",
+    "blink_rate_per_min",
+    "avg_blink_dur_sec",
+    "longest_eye_closure_sec"
+  ],
+  "seq_len": 150,
+  "model": {
+    "format": ".keras",
+    "path": "model.keras"
+  },
+  "scaler": null
+}

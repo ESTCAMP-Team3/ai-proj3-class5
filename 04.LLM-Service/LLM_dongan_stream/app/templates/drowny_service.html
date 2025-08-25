@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+  <title>No Drowsy!! - Prototype</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script defer src="{{ url_for('static', filename='js/app.js') }}"></script>
+</head>
+<body>
+  <div id="device" class="device-viewport">
+    <div id="stageArea" class="stage-area bg-normal" role="region" aria-label="상태 영역">
+      <div id="stageLabel" class="stage-label">정상</div>
+      <div id="dValue" class="d-value">D: --</div>
+      <div id="centerMessage" class="center-message" aria-live="assertive"></div>
+    </div>
+
+    <!-- chat overlay is transparent and sits over device-viewport -->
+    <div id="chatOverlay" class="chat-overlay" role="region" aria-label="채팅 영역">
+      <!-- 채팅 메시지들이 들어갈 영역 -->
+      <div id="chatLog" class="chat-log" aria-live="polite" aria-atomic="false"></div>
+
+      <!-- 채팅 입력/버튼 영역 -->
+      <div class="chat-controls" role="form" aria-label="채팅 입력">
+        <input id="chatInput" type="text" placeholder="메시지를 입력하거나 음성으로 말하세요" autocomplete="off" aria-label="메시지 입력" />
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

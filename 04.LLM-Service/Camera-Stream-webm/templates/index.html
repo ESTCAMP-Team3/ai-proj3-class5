@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Camera Uploader (24fps @ 640x480)</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
+    .row { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+    video { width: 320px; height: 240px; background:#000; }
+    button { padding: 8px 14px; border-radius: 8px; border: 1px solid #aaa; cursor: pointer; }
+    #log { white-space: pre-wrap; background:#f7f7f7; padding: 8px; border:1px solid #ddd; border-radius:8px; margin-top:10px; max-height:200px; overflow:auto;}
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#e8eefc; border:1px solid #cad6ff; margin-left:8px; }
+  </style>
+</head>
+<body>
+  <h2>웹 카메라 스트리밍 → Flask 업로드</h2>
+  <div class="row">
+    <video id="preview" autoplay playsinline muted></video>
+    <div>
+      <div>
+        <label>카메라: </label>
+        <select id="cameraSelect"></select>
+        <span class="pill" id="codecTag">코덱: -</span>
+      </div>
+      <div style="margin-top:8px;">
+        <button id="btnStart">▶ 시작</button>
+        <button id="btnStop" disabled>■ 정지</button>
+      </div>
+      <div style="margin-top:8px;">
+        <small>요청 해상도: 640×480 / 24 fps, 전면 카메라 우선</small>
+      </div>
+      <div style="margin-top:8px;">
+        <small>세션ID: <code id="sid"></code> · 보낸 세그먼트: <code id="sentCount">0</code></small>
+      </div>
+    </div>
+  </div>
+
+  <div id="log"></div>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>
