@@ -1,5 +1,5 @@
 # 베이스 이미지: 기존 Harbor 레지스트리의 이미지
-FROM harbor.dongango.com/pub/fsk-py311:0.1
+FROM harbor.dongango.com/pub/fsk-py311:0.2
 
 # 작업 디렉토리 지정
 WORKDIR /app

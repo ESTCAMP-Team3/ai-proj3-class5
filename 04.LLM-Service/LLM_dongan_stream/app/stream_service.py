@@ -8,6 +8,7 @@ import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, Any
+from confluent_kafka import Producer
 
 from flask import Blueprint, current_app, request, jsonify, abort
 
@@ -22,6 +23,47 @@ class _StreamServiceState:
         self.PROCESSING_MODE = processing_mode
         self.work_q: "queue.Queue[Path]" = queue.Queue()
         self.worker_thread: Optional[threading.Thread] = None
+
+        # sessions 상태 저장용 (필요시 확장 가능)
+        self.sessions: Dict[str, Dict[str, Any]] = {}
+        self._lock = threading.Lock()
+
+
+        # --- Kafka Producer 초기화 ---
+        kafka_conf = {
+            "bootstrap.servers": "kafka.dongango.com:9094",
+        }
+        self.kafka_topic = "zolgima-control"
+        self.producer = Producer(kafka_conf)
+
+    def _delivery_report(self, err, msg):
+        if err is not None:
+            _log("Kafka delivery failed", {"error": str(err), "topic": msg.topic(), "key": msg.key().decode() if msg.key() else None})
+        else:
+            _log("Kafka delivered", {"topic": msg.topic(), "partition": msg.partition(), "offset": msg.offset(), "key": msg.key().decode() if msg.key() else None})
+
+    def send_control(self, key: str, session_id: str, stream_type: str = "jpeg"):
+        """
+        key: "start-stream" | "stop-stream"
+        payload: {"sesstion-id": session_id, "session-id": session_id, "type": stream_type}
+        """
+        payload = {
+            "session-id": session_id,    # 일반 표기(소비자 호환용)
+            "type": stream_type,
+        }
+        data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        try:
+            self.producer.produce(
+                topic=self.kafka_topic,
+                key=key.encode("utf-8"),
+                value=data,
+                on_delivery=self._delivery_report
+            )
+            # 큐 비우기 (non-blocking)
+            self.producer.poll(0)
+            _log("Kafka produce queued", {"topic": self.kafka_topic, "key": key, "payload": payload})
+        except Exception as e:
+            _log("Kafka produce error", {"error": str(e), "key": key})
 
     def ensure_dirs(self):
         self.INBOX_DIR.mkdir(parents=True, exist_ok=True)
@@ -80,6 +122,52 @@ def create_stream_blueprint() -> Blueprint:
         st = _get_state()
         return jsonify(ok=True, mode=st.PROCESSING_MODE)
 
+    @bp.post("/start")
+    def start_session():
+        """
+        업로드 시작을 명시적으로 알림.
+        헤더: X-Session-Id
+        """
+        st = _get_state()
+        session_id = request.headers.get("X-Session-Id")
+        if not session_id:
+            return abort(400, "Missing X-Session-Id")
+
+        with st._lock:
+            if session_id not in st.sessions or st.sessions[session_id].get("ended"):
+                st.sessions[session_id] = {
+                    "started": True,
+                    "ended": False,
+                    "first_seq": None,
+                    "last_seq": None,
+                    "last_seen": None,
+                }
+                _log("▶ stream started(by client)", {"session": session_id})
+                st.send_control("start-stream", session_id, stream_type="jpeg")
+        return jsonify(ok=True)
+
+    @bp.post("/stop")
+    def stop_session():
+        """
+        업로드 종료를 명시적으로 알림.
+        헤더: X-Session-Id
+        """
+        st = _get_state()
+        session_id = request.headers.get("X-Session-Id")
+        if not session_id:
+            return abort(400, "Missing X-Session-Id")
+
+        with st._lock:
+            info = st.sessions.get(session_id)
+            if info and not info.get("ended"):
+                info["ended"] = True
+                _log("■ stream ended(by client)", {
+                    "session": session_id,
+                    "last_seq": info.get("last_seq")
+                })
+                st.send_control("stop-stream", session_id, stream_type="jpeg")
+        return jsonify(ok=True)
+
     @bp.post("/upload")
     def upload_jpeg():
         """
@@ -126,6 +214,7 @@ def create_stream_blueprint() -> Blueprint:
         st.work_q.put(final_path)
 
         return jsonify(ok=True, saved=str(final_path))
+
 
     return bp
 

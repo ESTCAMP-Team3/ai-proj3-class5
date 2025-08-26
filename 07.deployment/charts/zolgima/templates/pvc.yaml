@@ -1,0 +1,26 @@
+{{- if .Values.sharedData.enabled }}
+{{- $ns := .Release.Namespace }}
+{{- $name := .Values.sharedData.name | default (printf "%s-shareddata" (include "zolgima.fullname" .)) }}
+{{- $existing := lookup "v1" "PersistentVolumeClaim" $ns $name }}
+
+{{- if not $existing }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ $name }}
+  labels:
+    app.kubernetes.io/name: {{ include "zolgima.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+spec:
+  accessModes:
+{{- range .Values.sharedData.accessModes }}
+  - {{ . }}
+{{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.sharedData.size }}
+{{- if .Values.sharedData.storageClassName }}
+  storageClassName: {{ .Values.sharedData.storageClassName | quote }}
+{{- end }}
+{{- end }}
+{{- end }}

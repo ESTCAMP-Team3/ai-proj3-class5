@@ -11,7 +11,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.3"
+  tag: "0.5"
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -129,3 +129,14 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+sharedData:
+  enabled: true
+  mountPath: /app/data
+
+  # "항상 쓸 PVC 이름" (미리 만들어져 있어도 재사용, 없으면 생성)
+  name: zolgima-shareddata
+
+  size: 100Gi
+  accessModes: ["ReadWriteMany"]
+  storageClassName: "nfs-client"   # RWX 지원 StorageClass

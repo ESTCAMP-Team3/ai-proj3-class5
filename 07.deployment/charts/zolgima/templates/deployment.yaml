@@ -46,13 +46,16 @@ spec:
             {{- toYaml .Values.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
-          {{- with .Values.volumeMounts }}
+          {{- if .Values.sharedData.enabled }}
           volumeMounts:
-            {{- toYaml . | nindent 12 }}
+            - name: stream-data
+              mountPath: {{ .Values.sharedData.mountPath }}
           {{- end }}
-      {{- with .Values.volumes }}
+      {{- if .Values.sharedData.enabled }}
       volumes:
-        {{- toYaml . | nindent 8 }}
+        - name: stream-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.sharedData.name | default (printf "%s-shareddata" (include "zolgima.fullname" .)) }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:

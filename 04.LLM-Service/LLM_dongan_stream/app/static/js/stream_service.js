@@ -82,7 +82,7 @@ async function setupStream(deviceId) {
   log("미리보기 시작");
 }
 
-function start() {
+async function start() {
   if (!mediaStream) {
     log("스트림 없음");
     return;
@@ -97,14 +97,27 @@ function start() {
   // 🔽 새 탭으로 서비스 화면 오픈 (세션ID 전달)
   window.open(`/drowny_service?sid=${encodeURIComponent(sessionId)}`, "_blank", "noopener");
 
+  // 명시적 start API 호출
+  await fetch("/stream/start", {
+    method: "POST",
+    headers: { "X-Session-Id": sessionId }
+  });
+
   loopFrames();
   log("JPEG 업로드 시작");
 }
 
-function stop() {
+async function stop() {
   running = false;
   $btnStart.disabled = false;
   $btnStop.disabled = true;
+
+  // 명시적 stop API 호출
+  await fetch("/stream/stop", {
+    method: "POST",
+    headers: { "X-Session-Id": sessionId }
+  });
+
   log("정지");
 }
 
