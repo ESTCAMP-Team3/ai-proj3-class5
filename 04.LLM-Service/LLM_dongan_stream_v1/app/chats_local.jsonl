@@ -1,0 +1,6 @@
+{"ts": "2025-08-26T03:59:43Z", "user": "user", "text": "단지 상태 확인 중인.", "msg_id": "2ffecf4cabdb18fe041562982e1e2e2a973a6329"}
+{"ts": "2025-08-26T03:59:43Z", "user": "assistant", "text": "응답(샘플): \"단지 상태 확인 중인.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "6295f6fde7f7da4cadaf31fbbb554051e6a41b2a"}
+{"ts": "2025-08-26T03:59:47Z", "user": "user", "text": "예.", "msg_id": "516c555725c16c2b46b854337142d15ea7b91cff"}
+{"ts": "2025-08-26T03:59:47Z", "user": "assistant", "text": "응답(샘플): \"예.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "439d6737b2deea845ebebf149f26a4fc4034f6b3"}
+{"ts": "2025-08-26T03:59:52Z", "user": "user", "text": "어.", "msg_id": "c6ba0427d05c04080d39ad7200373df5d726c4bf"}
+{"ts": "2025-08-26T03:59:52Z", "user": "assistant", "text": "응답(샘플): \"어.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "33feabddcafa81f719e096b174ceba7d5a892fd0"}
