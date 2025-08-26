@@ -93,6 +93,10 @@ function start() {
   $sid.textContent = sessionId;
   $btnStart.disabled = true;
   $btnStop.disabled = false;
+
+  // 🔽 새 탭으로 서비스 화면 오픈 (세션ID 전달)
+  window.open(`/drowny_service?sid=${encodeURIComponent(sessionId)}`, "_blank", "noopener");
+
   loopFrames();
   log("JPEG 업로드 시작");
 }
@@ -146,7 +150,7 @@ async function captureAndSend() {
 }
 
 async function uploadJPEG(blob, session, seq) {
-  const r = await fetch("/upload", {
+  const r = await fetch("/stream/upload", {
     method: "POST",
     headers: {
       "X-Session-Id": session,

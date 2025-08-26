@@ -1,6 +1,6 @@
 # values.yaml
 image:
   repository: harbor.dongango.com/aiclass5/zolgima-svr
-  tag: "0.2"        # ← 새 버전으로 변경
+  tag: "0.3"        # ← 새 버전으로 변경
   pullPolicy: IfNotPresent  # 태그를 매번 바꾼다면 OK. 그렇지 않다면 Always 권장
   # digest: "sha256:abcd..."  # 태그 대신 다이제스트 고정도 가능(권장)

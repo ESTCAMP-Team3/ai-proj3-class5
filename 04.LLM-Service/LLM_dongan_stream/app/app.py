@@ -7,6 +7,7 @@ from LLM_chat import generate_stage_payload, verify_user_answer, determine_stage
 from user_service import validate_user, create_user, create_user_session, insert_state_history, get_active_sessions, get_latest_state_for_session
 from user_state import get_user_state, stage_from_D, stage_from_level
 from state_watcher import StateDBWatcher
+from stream_service import register_stream_service
 
 import time
 import os
@@ -18,6 +19,18 @@ app.config["SECRET_KEY"] = "supersecret"   # 환경변수로 관리 권장
 app.secret_key = "my-very-secret-key-1234"
 socketio = SocketIO(app, cors_allowed_origins="*")
 
+# ----------------------
+# 스트림 서비스 설정
+# ----------------------
+#
+app.config.update(
+    STREAM_DATA_DIR="./data",           # 절대경로 가능: "/var/lib/camstream"
+    STREAM_PROCESSING_MODE="outbox",    # "none"으로 두면 저장만
+)
+
+# 블루프린트 등록 (엔드포인트: /stream/...)
+register_stream_service(app, url_prefix="/stream")
+
 # Flask-Sock 설정
 sock = Sock(app)
 
@@ -26,6 +39,11 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STREAM_DIR = os.path.join(BASE_DIR, 'uploads', 'streams')
 os.makedirs(STREAM_DIR, exist_ok=True)
 
+# app.py (메인앱에 추가)
+@app.get("/drowny_service")
+def drowny_service():
+    return render_template("drowny_service.html")
+    
 # ----------------------
 # 로그인/로그아웃
 # ----------------------
@@ -83,50 +101,12 @@ def register():
 def index():
     if "user_id" not in session:
         return redirect(url_for("login"))
-    return render_template("drowny_service.html", username=session["username"])
+    return render_template("stream_service.html", username=session["username"])
 
 @app.get('/healthz')
 def healthz():
     return 'ok'
 
-# WebSocket: 바이너리 조각 수신
-@sock.route('/stream')
-def stream(ws):
-    sid = request.args.get('sid','anon')
-    ext = request.args.get('ext','webm').lower()
-    if ext not in ('mp4','webm'): ext = 'webm'
-
-    path = None
-    f = None
-    total = 0
-    try:
-        while True:
-            data = ws.receive()
-            if data is None:
-                break
-            if isinstance(data, str):
-                continue
-            if f is None:
-                fname = time.strftime(f'{sid}-%Y%m%d-%H%M%S.{ext}')
-                path = os.path.join(STREAM_DIR, fname)
-                f = open(path, 'ab')
-            f.write(data)
-            total += len(data)
-    finally:
-        if f: f.close()
-        if path and total == 0:
-            try: os.remove(path)
-            except: pass
-
-
-@app.route('/upload', methods=['POST'])
-def upload():
-    f = request.files.get('file')
-    if not f:
-        return ('no file', 400)
-    save_path = os.path.join('uploads', secure_filename(f.filename))
-    f.save(save_path)
-    return 'ok'
 
 @app.route("/ingest", methods=["POST"])
 def ingest():

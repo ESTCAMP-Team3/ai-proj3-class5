@@ -11,7 +11,7 @@ image:
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "0.2"
+  tag: "0.3"
 
 # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
@@ -64,16 +64,22 @@ ingress:
   annotations: 
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    # 업로드(동영상/연속 JPEG) 안정화
+    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "300"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+
   hosts:
     - host: zolgima.dongango.com
       paths:
         - path: /
           pathType: Prefix
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls: 
+    - secretName: zolgima-tls
+      hosts:
+        - zolgima.dongango.com
 
 resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
