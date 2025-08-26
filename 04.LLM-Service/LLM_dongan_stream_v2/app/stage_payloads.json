@@ -1,0 +1,83 @@
+{
+  "정상": {
+    "announcement": "정상 상태입니다.",
+    "question": "",
+    "music": "",
+    "music_action": "stop",
+    "tts_voice": "female_30",
+    "volume": 0.6
+  },
+  "의심경고": {
+    "announcement": "주의! 졸음 신호 감지! 집중해주세요.",
+    "question": "",
+    "music": "/static/sounds/L1_alarm.wav",
+    "music_action": "play",
+    "tts_voice": "female_30",
+    "volume": 0.8
+  },
+  "집중모니터링": {
+    "announcement": "상태 확인 중입니다.",
+    "question": "",
+    "music": "",
+    "music_action": "stop",
+    "tts_voice": "female_30",
+    "volume": 0.6
+  },
+  "개선": {
+    "announcement": "좋아요.상태가 나아졌어요.",
+    "question": "",
+    "music": "",
+    "music_action": "stop",
+    "tts_voice": "female_30",
+    "volume": 0.6
+  },
+  "L1": {
+    "announcement": "졸음이 계속됩니다. 휴식을 권장해요.",
+    "question": "지금 날짜가 몇 일이죠?",
+    "music": "/static/sounds/L1_alarm.wav",
+    "music_action": "play",
+    "music_loop": true,
+    "tts_voice": "Microsoft Heami - Korean (Korea)",
+    "volume": 1.0,
+    "alert_interval_ms": 1000
+  },
+  "L2": {
+    "announcement": "강한 졸음 신호입니다. 창문 열기 권장.",
+    "question": "서울 다음 도시는?",
+    "music": "/static/sounds/L2_alarm.wav",
+    "music_action": "play",
+    "music_loop": true,
+    "tts_voice": "female_30",
+    "volume": 1.1,
+    "alert_interval_ms": 1000
+  },
+  "L3": {
+    "announcement": "고위험 졸음 상태입니다. 휴게소 안내할까요?",
+    "question": "10에서 1까지 거꾸로 말해보세요.",
+    "music": "/static/sounds/L3_alarm.wav",
+    "music_action": "play",
+    "music_loop": true,
+    "tts_voice": "female_30",
+    "volume": 1.2,
+    "alert_interval_ms": 1000
+  },
+  "FAILSAFE": {
+    "announcement": "고위험 상태입니다! 즉시 정차하세요.",
+    "question": "",
+    "music": "/static/sounds/fail_alarm.wav",
+    "music_action": "play",
+    "music_loop": true,
+    "tts_voice": "female_30",
+    "volume": 1.3,
+    "alert_interval_ms": 1000
+  },
+  "휴식": {
+    "announcement": "휴식 모드입니다. 휴게소 안내를 준비합니다.",
+    "question": "",
+    "music": "/static/sounds/rest_mode.mp3",
+    "music_action": "play",
+    "music_loop": false,
+    "tts_voice": "female_30",
+    "volume": 0.9
+  }
+}

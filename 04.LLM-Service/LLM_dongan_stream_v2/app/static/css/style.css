@@ -1,0 +1,232 @@
+/* 졸음운전 방지 시스템 - 최적화된 스타일 */
+
+/* === 변수 정의 === */
+:root {
+  --bg-dark-1: #071018;
+  --bg-dark-2: #0f1b22;
+  --accent: #dfeffb;
+  --muted: rgba(255,255,255,0.22);
+  --glass: rgba(255,255,255,0.04);
+  --device-w: 390px;
+  --device-h: 844px;
+}
+
+/* === 기본 리셋 === */
+*{box-sizing:border-box; margin:0; padding:0;}
+html,body{height:100%; font-family:"Inter","Noto Sans KR",system-ui; -webkit-font-smoothing:antialiased;}
+body{
+  background: #0a0a0a;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:100vh;
+}
+
+/* === 디바이스 뷰포트 === */
+#device {
+  width: var(--device-w);
+  height: var(--device-h);
+  max-width: 92vw;
+  max-height: 96vh;
+  position: relative;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+  background: linear-gradient(180deg, var(--bg-dark-1) 0%, var(--bg-dark-2) 100%);
+}
+
+/* === 상태 영역 === */
+#stageArea {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 12px;
+  gap: 8px;
+  text-align: center;
+  z-index: 10;
+}
+
+#stageLabel {
+  font-size: 55px;
+  font-weight: 800;
+  color: var(--accent);
+  white-space: pre-line;
+  line-height: 1.2;
+  transform: translateY(-100px);
+}
+
+#dValue {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 6px;
+}
+
+#centerMessage {
+  display: none;
+  font-size: 30px;
+  font-weight: 800;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: var(--glass);
+  color: #fff;
+  white-space: pre-line;
+  text-align: center;
+}
+
+/* === 채팅 오버레이 === */
+#chatOverlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 20%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 12px;
+  gap: 8px;
+  z-index: 40;
+  background: transparent;
+  transition: opacity 0.5s ease-in-out; /* 부드러운 효과 추가 */
+  opacity: 1;
+}
+
+/* 채팅 오버레이 숨김 상태 */
+#chatOverlay.hidden {
+  opacity: 0;
+  pointer-events: none; /* 숨겨졌을 때 클릭 방지 */
+}
+
+#chatLog {
+  flex: 1;
+  overflow-y: hidden; /* 스크롤바를 숨김 */
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-right: 6px;
+}
+
+.bubble {
+  max-width: 82%;
+  padding: 6px 10px;
+  border-radius: 12px;
+  background: transparent;
+  font-size: 14px;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.bubble.user {
+  align-self: flex-end;
+  text-align: right;
+  color: #cfe9ff;
+}
+
+.bubble.assistant {
+  align-self: flex-start;
+  text-align: left;
+  color: #fff;
+}
+
+.chat-controls {
+  display: flex;
+  height: 52px;
+  padding: 6px;
+  border-radius: 10px;
+}
+
+#chatInput {
+  flex: 1;
+  height: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--glass);
+  color: var(--accent);
+  font-size: 15px;
+  outline: none;
+}
+
+#chatInput::placeholder {
+  color: var(--muted);
+}
+
+#chatInput:focus {
+  box-shadow: 0 0 0 4px rgba(100,160,255,0.04);
+  border-color: rgba(100,160,255,0.12);
+}
+
+/* === 단계별 배경 === */
+.bg-normal { background: linear-gradient(90deg, #167af5, #98f5f5); }
+.bg-attention { background: linear-gradient(90deg, #fa6502, #f7923f); }
+.bg-focused { background: linear-gradient(180deg, #37c3e6, #061b22); }
+.bg-improving { background: linear-gradient(90deg, #98f5f5, #167af5); }
+
+.bg-L1 {
+  background: radial-gradient(circle, #1b1b1a 30%, #000 90%);
+  animation: pulse 2.5s infinite;
+}
+
+.bg-L2 {
+  background: radial-gradient(circle, #074901 30%, #000 90%);
+  animation: pulse 2s infinite;
+}
+
+.bg-L3 {
+  background: radial-gradient(circle, #a201ff 30%, #000 90%);
+  animation: pulse 1.5s infinite;
+}
+
+.bg-FAILSAFE {
+  background: radial-gradient(circle, #ff0101 30%, #000 90%);
+  animation: pulse 0.5s infinite;
+}
+
+/* === 플래시 애니메이션 === */
+.flash-L1 { animation: flash 2.5s infinite; }
+.flash-L2 { animation: flash 2s infinite; }
+.flash-L3 { animation: flash 1.5s infinite; }
+.flash-FAILSAFE { animation: flash 0.5s infinite; }
+
+@keyframes pulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.5); }
+}
+
+@keyframes flash {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(2); }
+}
+
+/* === 중앙 메시지 활성화 === */
+.center-active #centerMessage {
+  display: block;
+  animation: popIn 220ms ease-out;
+}
+
+@keyframes popIn {
+  from { transform: translateY(-6px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* === 반응형 === */
+@media (max-width: 420px) {
+  #stageLabel { font-size: 28px; }
+  #dValue { font-size: 16px; }
+  #centerMessage { font-size: 24px; }
+  #chatInput { font-size: 14px; }
+}
+
+/* === 접근성 === */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
