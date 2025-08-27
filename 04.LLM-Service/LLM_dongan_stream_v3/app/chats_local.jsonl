@@ -1,0 +1,196 @@
+{"ts": "2025-08-26T03:59:43Z", "user": "user", "text": "단지 상태 확인 중인.", "msg_id": "2ffecf4cabdb18fe041562982e1e2e2a973a6329"}
+{"ts": "2025-08-26T03:59:43Z", "user": "assistant", "text": "응답(샘플): \"단지 상태 확인 중인.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "6295f6fde7f7da4cadaf31fbbb554051e6a41b2a"}
+{"ts": "2025-08-26T03:59:47Z", "user": "user", "text": "예.", "msg_id": "516c555725c16c2b46b854337142d15ea7b91cff"}
+{"ts": "2025-08-26T03:59:47Z", "user": "assistant", "text": "응답(샘플): \"예.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "439d6737b2deea845ebebf149f26a4fc4034f6b3"}
+{"ts": "2025-08-26T03:59:52Z", "user": "user", "text": "어.", "msg_id": "c6ba0427d05c04080d39ad7200373df5d726c4bf"}
+{"ts": "2025-08-26T03:59:52Z", "user": "assistant", "text": "응답(샘플): \"어.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "33feabddcafa81f719e096b174ceba7d5a892fd0"}
+{"ts": "2025-08-26T06:07:32Z", "user": "user", "text": "인지 상태 확인 중이.", "msg_id": "597fa9ea33c2b30b0ba087a3003a65c94d6f8964"}
+{"ts": "2025-08-26T06:07:32Z", "user": "assistant", "text": "응답(샘플): \"인지 상태 확인 중이.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "7e142c1bf036a7480be06c58f9f7d8bb43a47ca1"}
+{"ts": "2025-08-26T06:48:11Z", "user": "user", "text": "아 아.", "msg_id": "a85329949b966fa8eeea0e59cffaa2d426a28179"}
+{"ts": "2025-08-26T06:48:11Z", "user": "assistant", "text": "응답(샘플): \"아 아.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "a9ddd0e6f2b4423b328a908ac636b21b6a9154e0"}
+{"ts": "2025-08-26T06:48:26Z", "user": "user", "text": "아.", "msg_id": "9b2286081c5b7956a5281120ddb7515ba27bfdb4"}
+{"ts": "2025-08-26T06:48:26Z", "user": "assistant", "text": "응답(샘플): \"아.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "2359ddb85aa81d081faec52df13cdcdd46ab7dcc"}
+{"ts": "2025-08-26T06:48:31Z", "user": "user", "text": "아.", "msg_id": "1419ad0cf5b7a45be652a3d247edee8bb2406bad"}
+{"ts": "2025-08-26T06:48:31Z", "user": "assistant", "text": "응답(샘플): \"아.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "e8629cac8c98e76c91893b84c51e54213d0dc992"}
+{"ts": "2025-08-26T06:48:37Z", "user": "user", "text": "어.", "msg_id": "b35971a0c054833a550df3d4dd0a26f67c121500"}
+{"ts": "2025-08-26T06:48:37Z", "user": "assistant", "text": "응답(샘플): \"어.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "30481b44281a94027a4ccece1fb456bc4e4049ec"}
+{"ts": "2025-08-26T07:10:05Z", "user": "user", "text": "아까랑 거의 비슷하다 보니까.", "msg_id": "c4cfe99209ae30bb9fb2ccecc678810980f19c17"}
+{"ts": "2025-08-26T07:10:05Z", "user": "assistant", "text": "응답(샘플): \"아까랑 거의 비슷하다 보니까.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "38342a462cf7b2ea60bafab053490c1149c0b48e"}
+{"ts": "2025-08-26T07:10:10Z", "user": "user", "text": "저는 지금 딱히 없고 말로만 일단 설명.", "msg_id": "f70d7c10554358ed9b32ef87b519e3c26a64906a"}
+{"ts": "2025-08-26T07:10:10Z", "user": "assistant", "text": "응답(샘플): \"저는 지금 딱히 없고 말로만 일단 설명.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "637d1db2982c37f697a0f1133ae91de0d11d781f"}
+{"ts": "2025-08-26T07:10:15Z", "user": "user", "text": "혹시 안 하셨나요? 혹시 안에 그거?", "msg_id": "3df44d2ccc324f3dc51c2dcefb30046c5cb0c5ea"}
+{"ts": "2025-08-26T07:10:15Z", "user": "assistant", "text": "응답(샘플): \"혹시 안 하셨나요? 혹시 안에 그거?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "b260dbb1a69c6f9ba47702c2371838b730f8a410"}
+{"ts": "2025-08-26T07:10:19Z", "user": "user", "text": "그 파이를 떠나 그런 거 같은데 아닌가?", "msg_id": "0e970000bccd5c0006ffb5c0d6c6d2a44dce013f"}
+{"ts": "2025-08-26T07:10:19Z", "user": "assistant", "text": "응답(샘플): \"그 파이를 떠나 그런 거 같은데 아닌가?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "a47c2567564aa2955ac905502695d43585967128"}
+{"ts": "2025-08-26T07:10:27Z", "user": "user", "text": "텐서플로 쪽 돼가지고 학사.", "msg_id": "0c0a90c08e4da5bf7903015b34f8b38a2ac81481"}
+{"ts": "2025-08-26T07:10:27Z", "user": "assistant", "text": "응답(샘플): \"텐서플로 쪽 돼가지고 학사.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "7e5fd5b7cc433debcec158bb53d66c0ffb5e50f1"}
+{"ts": "2025-08-26T07:10:31Z", "user": "user", "text": "모델 불러오는 부분만 해서?", "msg_id": "f722bb4ce072e558d0ffa2ced27606896f8491ac"}
+{"ts": "2025-08-26T07:10:31Z", "user": "assistant", "text": "응답(샘플): \"모델 불러오는 부분만 해서?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "c22f77fc9424f6c048ce68ba2080aa77f844a064"}
+{"ts": "2025-08-26T07:10:35Z", "user": "user", "text": "어.", "msg_id": "742a645b2ed0f498c1858ade5db166c74f8998c2"}
+{"ts": "2025-08-26T07:10:35Z", "user": "assistant", "text": "응답(샘플): \"어.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "68d6e48e2de41ced5cafba3108806e06510c2326"}
+{"ts": "2025-08-26T07:10:54Z", "user": "user", "text": "빨리 이름이 뭔가?", "msg_id": "3bbca09a37af59007e6dbad32657654fa3392c6c"}
+{"ts": "2025-08-26T07:10:54Z", "user": "assistant", "text": "응답(샘플): \"빨리 이름이 뭔가?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "285ea774228dca450901782007db27c09f866646"}
+{"ts": "2025-08-26T07:10:58Z", "user": "user", "text": "그 뒤에 로드 붙어 있는 거?", "msg_id": "733940e216f95f691d1d0e59dfcbae389178f23f"}
+{"ts": "2025-08-26T07:10:58Z", "user": "assistant", "text": "응답(샘플): \"그 뒤에 로드 붙어 있는 거?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "7995e044478ddd7ee6d74b01e698e78427d27cc7"}
+{"ts": "2025-08-26T07:11:01Z", "user": "user", "text": "아 그.", "msg_id": "0373f410c34ab2ccfdef766e174bc73698cb7b77"}
+{"ts": "2025-08-26T07:11:01Z", "user": "assistant", "text": "응답(샘플): \"아 그.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "adcdb1fed71acac6d71a54d9ddeb177431458852"}
+{"ts": "2025-08-26T07:11:11Z", "user": "user", "text": "근데 요거만 따로 해서 파일 뽑았나?", "msg_id": "feb6de441b7bda098de85feded890c978dbfd22e"}
+{"ts": "2025-08-26T07:11:11Z", "user": "assistant", "text": "응답(샘플): \"근데 요거만 따로 해서 파일 뽑았나?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "445b4912aec203235e8a656b1e202dc1cf51707a"}
+{"ts": "2025-08-26T07:11:14Z", "user": "user", "text": "인터섹 가공하는 부분은 아?", "msg_id": "96aaaf3727fb943320896110f5906ef7397b4a03"}
+{"ts": "2025-08-26T07:11:14Z", "user": "assistant", "text": "응답(샘플): \"인터섹 가공하는 부분은 아?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "6723eaa9916b26e1411ccf787b953f729ac93fef"}
+{"ts": "2025-08-26T07:11:19Z", "user": "user", "text": "그때 그 써야 될.", "msg_id": "e06cfd4ce90fb47f76c97885930eba4e94d80686"}
+{"ts": "2025-08-26T07:11:19Z", "user": "assistant", "text": "응답(샘플): \"그때 그 써야 될.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "5d63674b41972ef1eeaa65903d24e62cf3d4b6cb"}
+{"ts": "2025-08-26T07:11:22Z", "user": "user", "text": "그래서 일단은?", "msg_id": "0697b7e563e5965b8b02cf9c42f4fc7326c6e7aa"}
+{"ts": "2025-08-26T07:11:22Z", "user": "assistant", "text": "응답(샘플): \"그래서 일단은?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "0797b18389d0e7ebd2bcf0c18d404415485433bd"}
+{"ts": "2025-08-26T07:11:26Z", "user": "user", "text": "일단은 여기 파일 따로 뺄 때 이?", "msg_id": "5d50a586d49bc644934a54b2e894fafbc4c10c3d"}
+{"ts": "2025-08-26T07:11:26Z", "user": "assistant", "text": "응답(샘플): \"일단은 여기 파일 따로 뺄 때 이?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "f8a9a7ed1037014db5f4ef0520adf108b155d3f7"}
+{"ts": "2025-08-26T07:11:29Z", "user": "user", "text": "부분들은?", "msg_id": "8c2607ab8cc03f21c8b65252b1f52e46647fd79d"}
+{"ts": "2025-08-26T07:11:29Z", "user": "assistant", "text": "응답(샘플): \"부분들은?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "892ed7f4184ce392b72b2c8ce63a9b17caa28886"}
+{"ts": "2025-08-26T07:11:33Z", "user": "user", "text": "고 중간에 뭐냐?", "msg_id": "0a975cbaf87d5bf132f87079ed958629a802f52a"}
+{"ts": "2025-08-26T07:11:33Z", "user": "assistant", "text": "응답(샘플): \"고 중간에 뭐냐?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "360a43849caf0840d806cc55a49a56f0b4f71087"}
+{"ts": "2025-08-26T07:11:36Z", "user": "user", "text": "라고.", "msg_id": "27407537358f23e656dff2665d3d4a7aa8b7b395"}
+{"ts": "2025-08-26T07:11:36Z", "user": "assistant", "text": "응답(샘플): \"라고.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "14bddbdfbdc8130b8f65d8fdf14fb262b058b1c1"}
+{"ts": "2025-08-26T07:11:40Z", "user": "user", "text": "네 네 행사하고 학습하는 부분만.", "msg_id": "1f2f9e2f6a96acca6f44c75dbe6e2b58adf28e3a"}
+{"ts": "2025-08-26T07:11:40Z", "user": "assistant", "text": "응답(샘플): \"네 네 행사하고 학습하는 부분만.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "d5494761125195ca959124fd979ea901b8df43b7"}
+{"ts": "2025-08-26T07:11:44Z", "user": "user", "text": "그래서.", "msg_id": "4ddab7a48fc465f2f4e13cd1fc0103373a962b1f"}
+{"ts": "2025-08-26T07:11:44Z", "user": "assistant", "text": "응답(샘플): \"그래서.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "1de992575fb21e0d99d3a237fe12cdebbb482009"}
+{"ts": "2025-08-26T07:11:48Z", "user": "user", "text": "악수를 아 뭐 한 건가요?", "msg_id": "777f116349f897e21cc5e25259a1480f3674d921"}
+{"ts": "2025-08-26T07:11:48Z", "user": "assistant", "text": "응답(샘플): \"악수를 아 뭐 한 건가요?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "d4c81867e038b5211c3afb9907b8a3db8e84b793"}
+{"ts": "2025-08-26T07:11:52Z", "user": "user", "text": "팔 이제 파일로.", "msg_id": "033fc76ce0d731883890ed25e1184c46ff8efd25"}
+{"ts": "2025-08-26T07:11:52Z", "user": "assistant", "text": "응답(샘플): \"팔 이제 파일로.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "84188c4f5c88f5f37c522fa0f20a4174146d02ef"}
+{"ts": "2025-08-26T07:11:58Z", "user": "user", "text": "코딩하는.", "msg_id": "3e7b6eb2fca346dcba54fe640c01b31d99c2c192"}
+{"ts": "2025-08-26T07:11:58Z", "user": "assistant", "text": "응답(샘플): \"코딩하는.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "b684fe4f3fe243b897778f9654865dc1a7f10641"}
+{"ts": "2025-08-26T07:12:02Z", "user": "user", "text": "필수 돌린 거 아니에요?", "msg_id": "b49d7d39c2d90e595ed629aa97cb74e4feaf50f7"}
+{"ts": "2025-08-26T07:12:02Z", "user": "assistant", "text": "응답(샘플): \"필수 돌린 거 아니에요?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "65d5dd1f407685adee6bdee3705c8ab9e8f8bf16"}
+{"ts": "2025-08-26T07:12:06Z", "user": "user", "text": "그거는 이제 여기.", "msg_id": "14e7d2973ee4fd6e207f2122ca586fdc05f5d44e"}
+{"ts": "2025-08-26T07:12:06Z", "user": "assistant", "text": "응답(샘플): \"그거는 이제 여기.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "dcb8552637d4f4463b08ef85158edbbfd461304a"}
+{"ts": "2025-08-26T07:12:10Z", "user": "user", "text": "로딩하는 거 말고 이제.", "msg_id": "aafae4b4035f317244bd389a862e98b75bfa076c"}
+{"ts": "2025-08-26T07:12:10Z", "user": "assistant", "text": "응답(샘플): \"로딩하는 거 말고 이제.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "60bc39ce8f5af6b914f0270b986f8d1c2e12d608"}
+{"ts": "2025-08-26T07:12:15Z", "user": "user", "text": "그리고 눈이 가는 것만 하면은.", "msg_id": "c7aecda0bf188db21884068b78769aecc173718f"}
+{"ts": "2025-08-26T07:12:15Z", "user": "assistant", "text": "응답(샘플): \"그리고 눈이 가는 것만 하면은.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "8fddb4873828eb435e99a9ed6d8c3d8a30a2f992"}
+{"ts": "2025-08-26T07:12:19Z", "user": "user", "text": "아드 보여드렸던 것처럼.", "msg_id": "9649f151f5ee7bb74149672f97c088f5ef23e968"}
+{"ts": "2025-08-26T07:12:19Z", "user": "assistant", "text": "응답(샘플): \"아드 보여드렸던 것처럼.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "c92bb16136a840977e992f35fc4c15985135d82f"}
+{"ts": "2025-08-26T07:12:26Z", "user": "user", "text": "스케일러들 따로 뺀 거를 불러오고 그 다음에 그거를 바탕으로 해서.", "msg_id": "a9f110271583a28bf147d80c87d254a6f1310006"}
+{"ts": "2025-08-26T07:12:26Z", "user": "assistant", "text": "응답(샘플): \"스케일러들 따로 뺀 거를 불러오고 그 다음에 그거를 바탕으로 해서.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "06a06855e84de815934bb9000d7508aaf8633852"}
+{"ts": "2025-08-26T07:12:31Z", "user": "user", "text": "트레이닝 세트 랑벨리데이션 세트.", "msg_id": "e5c37e0931f27058a5a05834dabc30cdc1b15e36"}
+{"ts": "2025-08-26T07:12:31Z", "user": "assistant", "text": "응답(샘플): \"트레이닝 세트 랑벨리데이션 세트.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "3578b54ec80801b5ea3b789d591b43e95343f503"}
+{"ts": "2025-08-26T07:12:36Z", "user": "user", "text": "그다음에.", "msg_id": "fb108f6cdabf686975f649514cb0263399613f7e"}
+{"ts": "2025-08-26T07:12:36Z", "user": "assistant", "text": "응답(샘플): \"그다음에.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "fb1399c7aae7543b32ecb03eb601790367c63e70"}
+{"ts": "2025-08-26T07:12:41Z", "user": "user", "text": "불러온 모델의 입력으로 만들 데이터셋.", "msg_id": "b021ba38cec96e02c0532260712c45350c5cf87f"}
+{"ts": "2025-08-26T07:12:41Z", "user": "assistant", "text": "응답(샘플): \"불러온 모델의 입력으로 만들 데이터셋.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "ce394a8621838750ee9a19b3427a28af4a96b587"}
+{"ts": "2025-08-26T07:12:49Z", "user": "user", "text": "으로 변환한 다음에 그거를 넣어서 실행하는 거라고 보시면?", "msg_id": "50abf7d10043a6cf79e5aa4e0c18b8dc1a3d7d97"}
+{"ts": "2025-08-26T07:12:49Z", "user": "assistant", "text": "응답(샘플): \"으로 변환한 다음에 그거를 넣어서 실행하는 거라고 보시면?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "e6378869f6257d293f4986cda2afbed489faeaa6"}
+{"ts": "2025-08-26T07:12:56Z", "user": "user", "text": "집에 갈 때 결과는 여기 처럼 프로세서 좀 바꿨나요? 아니요.", "msg_id": "c115c8818bc153ed52489296461d8c96312574f1"}
+{"ts": "2025-08-26T07:12:56Z", "user": "assistant", "text": "응답(샘플): \"집에 갈 때 결과는 여기 처럼 프로세서 좀 바꿨나요? 아니요.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "3c42b6ab2504ff501ae022f61888a7edc48566bc"}
+{"ts": "2025-08-26T07:13:00Z", "user": "user", "text": "원래.", "msg_id": "b4dd82bd6c2c8c8fc4113573088035dc44de642f"}
+{"ts": "2025-08-26T07:13:00Z", "user": "assistant", "text": "응답(샘플): \"원래.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "e47016216e37e3522c8365bc69ccf48513169200"}
+{"ts": "2025-08-26T07:13:05Z", "user": "user", "text": "또 이렇게 나오면은 나오면은.", "msg_id": "8e6c80b15181ce486e693c8b48f684e96eaee4c0"}
+{"ts": "2025-08-26T07:13:05Z", "user": "assistant", "text": "응답(샘플): \"또 이렇게 나오면은 나오면은.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "9e95e5e53f6540a6fbcc9ae8aea4684a59cb8580"}
+{"ts": "2025-08-26T07:13:08Z", "user": "user", "text": "어.", "msg_id": "12d34076725159fd279cdd4b2a6691f7512932f0"}
+{"ts": "2025-08-26T07:13:08Z", "user": "assistant", "text": "응답(샘플): \"어.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "1e86acd8592c9028f5cde542e20141fb98b8ed8c"}
+{"ts": "2025-08-26T07:13:12Z", "user": "user", "text": "봤을 때도 동일하게 나온다.", "msg_id": "54b52188dc0ebb92e1bba1209158e0d8358c9a15"}
+{"ts": "2025-08-26T07:13:12Z", "user": "assistant", "text": "응답(샘플): \"봤을 때도 동일하게 나온다.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "ebb9bf0b4bcaea8d747fe9db207375bc168eaa91"}
+{"ts": "2025-08-26T07:13:17Z", "user": "user", "text": "조연 게 있나요? 조사하는 게.", "msg_id": "362e1a123ef0fa08b6bdfc62cbebddf494812e33"}
+{"ts": "2025-08-26T07:13:17Z", "user": "assistant", "text": "응답(샘플): \"조연 게 있나요? 조사하는 게.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "cf622a9869769d393f872ab03482f46209caf7cc"}
+{"ts": "2025-08-26T07:13:24Z", "user": "user", "text": "이 아마 원래 학습했을 때는 이렇게 나오는데?", "msg_id": "cb7db529ba19d63c304b9d4086632efb3add4ea9"}
+{"ts": "2025-08-26T07:13:24Z", "user": "assistant", "text": "응답(샘플): \"이 아마 원래 학습했을 때는 이렇게 나오는데?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "ac39f197ad1a08c047b6fb09e6a3e96f1b4f13c5"}
+{"ts": "2025-08-26T07:13:37Z", "user": "user", "text": "아직 여기다가 넣지 않았어 그것들?", "msg_id": "ea283037d4bd41637f647bfbbb493ee58cd2baea"}
+{"ts": "2025-08-26T07:13:37Z", "user": "assistant", "text": "응답(샘플): \"아직 여기다가 넣지 않았어 그것들?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "df4673ac13f870f2b8bb9044ae938c8f26792ba5"}
+{"ts": "2025-08-26T07:13:41Z", "user": "user", "text": "근데 계산해보는 건 아직은 안 나와가지고 이제.", "msg_id": "87d43f6db7a720d00903b105948f036cd9441707"}
+{"ts": "2025-08-26T07:13:41Z", "user": "assistant", "text": "응답(샘플): \"근데 계산해보는 건 아직은 안 나와가지고 이제.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "99bcddea1d705c16750e0cbfe584eec6a3fec058"}
+{"ts": "2025-08-26T07:13:46Z", "user": "user", "text": "그것도 너무 하면 되지 않을까?", "msg_id": "a45ffabf08a164525e8cb4b21fac5c81610d3e85"}
+{"ts": "2025-08-26T07:13:46Z", "user": "assistant", "text": "응답(샘플): \"그것도 너무 하면 되지 않을까?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "9987fbc60070e03593ad8cea6ea043917518ce43"}
+{"ts": "2025-08-26T07:13:50Z", "user": "user", "text": "리스타트를 했던 걸로 기억해가지고.", "msg_id": "9d16b6418c73c1a74bc01077720e2171a7edaf92"}
+{"ts": "2025-08-26T07:13:50Z", "user": "assistant", "text": "응답(샘플): \"리스타트를 했던 걸로 기억해가지고.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "07f857f598b1ad8cbb05bedb7f964f5621fede03"}
+{"ts": "2025-08-26T07:15:14Z", "user": "user", "text": "됐다.", "msg_id": "426abb632a715d7a3bfc4281083cc3c2fe3dc3e7"}
+{"ts": "2025-08-26T07:15:14Z", "user": "assistant", "text": "응답(샘플): \"됐다.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "b0cc4d9ec1c0a0bedf9a9dbe8a287b0d46cba2d6"}
+{"ts": "2025-08-26T07:15:18Z", "user": "user", "text": "있다. 2번 듣고.", "msg_id": "07992f2799e470d504c6012bb2ca09f664babb98"}
+{"ts": "2025-08-26T07:15:18Z", "user": "assistant", "text": "응답(샘플): \"있다. 2번 듣고.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "7c6675ecbef0a706d7af1b9141215cf5f06e76df"}
+{"ts": "2025-08-26T07:15:25Z", "user": "user", "text": "이거 어떻게 구성돼 있는지?", "msg_id": "de8af70cde6ab6e1d6cbdbff92fbdfde63832d9a"}
+{"ts": "2025-08-26T07:15:25Z", "user": "assistant", "text": "응답(샘플): \"이거 어떻게 구성돼 있는지?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "e1c0abadc94d017880b73b7e16ca9bf6eaa656f3"}
+{"ts": "2025-08-26T07:15:29Z", "user": "user", "text": "원래 학습했던 거랑.", "msg_id": "2e69634273c96626114811e1ba99c4e89d01f28f"}
+{"ts": "2025-08-26T07:15:29Z", "user": "assistant", "text": "응답(샘플): \"원래 학습했던 거랑.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "cdb1807144b39a0023ce5f95f6c58fd4eebd0b92"}
+{"ts": "2025-08-26T07:15:33Z", "user": "user", "text": "이 공 똑같겠죠? 당연히.", "msg_id": "13707745a6ceaaa51b9b493dc253357466f9e7cc"}
+{"ts": "2025-08-26T07:15:33Z", "user": "assistant", "text": "응답(샘플): \"이 공 똑같겠죠? 당연히.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "805b59e841ca12aa0edb986c5717a3b804605304"}
+{"ts": "2025-08-26T07:15:40Z", "user": "user", "text": "똑같아야 되고 그다음에 운동열을 만들려면은.", "msg_id": "1ee7c5cb2b4fa8b3539cbb1fb7ca60b066cee8bc"}
+{"ts": "2025-08-26T07:15:40Z", "user": "assistant", "text": "응답(샘플): \"똑같아야 되고 그다음에 운동열을 만들려면은.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "ee892bdebd121b5f6e3b9cd91ff0745400d1d110"}
+{"ts": "2025-08-26T07:15:44Z", "user": "user", "text": "것들이 필요.", "msg_id": "c58e58bd84630a4bead6ec9d3bbfe019a11c9167"}
+{"ts": "2025-08-26T07:15:44Z", "user": "assistant", "text": "응답(샘플): \"것들이 필요.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "39b9ae2bb6ec89a93d158d91cd434303b6c715ef"}
+{"ts": "2025-08-26T07:16:05Z", "user": "user", "text": "요거는?", "msg_id": "7c310842d3aaeb93ea6b82f3e1099f617610d53f"}
+{"ts": "2025-08-26T07:16:05Z", "user": "assistant", "text": "응답(샘플): \"요거는?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "28568c361217e1fb8c1c4644b01cc454dbd1a2d1"}
+{"ts": "2025-08-26T07:16:19Z", "user": "user", "text": "뭐 거의 비슷하게 나오면 혹시?", "msg_id": "465992c599bca7b7ff000bb828e9f64f8aeb5018"}
+{"ts": "2025-08-26T07:16:19Z", "user": "assistant", "text": "응답(샘플): \"뭐 거의 비슷하게 나오면 혹시?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "bb971ada2a9258d27edd6a8b8163b20bf65b1f79"}
+{"ts": "2025-08-26T07:16:24Z", "user": "user", "text": "마치 나옵니다.", "msg_id": "7fe54dbf429da4db3f32cb51d8cf3da3a7a57257"}
+{"ts": "2025-08-26T07:16:24Z", "user": "assistant", "text": "응답(샘플): \"마치 나옵니다.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "35aa15f423478ae7ae9d177a31418292209acbf9"}
+{"ts": "2025-08-26T07:16:35Z", "user": "user", "text": "뭐 데이터도 아예 데이터도 일단 같긴 한데 뭐 학습?", "msg_id": "3d27fed4a50e1ae55b977bde4992a2026416fdf3"}
+{"ts": "2025-08-26T07:16:35Z", "user": "assistant", "text": "응답(샘플): \"뭐 데이터도 아예 데이터도 일단 같긴 한데 뭐 학습?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "3d34303203ef93f5d2b0d4da1de6c4c249a1aebb"}
+{"ts": "2025-08-26T07:16:39Z", "user": "user", "text": "학습한 모델을 불러서 해소.", "msg_id": "92073feda92343a3518afe569e75743016662daa"}
+{"ts": "2025-08-26T07:16:39Z", "user": "assistant", "text": "응답(샘플): \"학습한 모델을 불러서 해소.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "0289e76079e0b260f6af527b4d0eb8bdd1b7e0c5"}
+{"ts": "2025-08-26T07:16:43Z", "user": "user", "text": "똑같은 한 결과 나오는 거 확인했다 라고.", "msg_id": "737f6bf0638bc4a89866aa5461c3692bfc590ba2"}
+{"ts": "2025-08-26T07:16:43Z", "user": "assistant", "text": "응답(샘플): \"똑같은 한 결과 나오는 거 확인했다 라고.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "539eb4037025efaba44cce04574c8f979620ba36"}
+{"ts": "2025-08-26T07:16:49Z", "user": "user", "text": "이겼습니다. 요거 한 걸로 해서 다시 업데이트해 주시고.", "msg_id": "815b0d8c728406de544b635ea806bbfb3418119a"}
+{"ts": "2025-08-26T07:16:49Z", "user": "assistant", "text": "응답(샘플): \"이겼습니다. 요거 한 걸로 해서 다시 업데이트해 주시고.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "bf687311876718f78cda25f40a65aaa86284af93"}
+{"ts": "2025-08-26T07:16:53Z", "user": "user", "text": "네, 뭘 하고 있었냐면은.", "msg_id": "80d5f42418fa62ed577310a701d1e79a7bcc2dc7"}
+{"ts": "2025-08-26T07:16:53Z", "user": "assistant", "text": "응답(샘플): \"네, 뭘 하고 있었냐면은.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "c2fb725cfbc185cfb12b8d72333fb05913a7e3be"}
+{"ts": "2025-08-26T07:16:58Z", "user": "user", "text": "이 여기 부분이 이제.", "msg_id": "f9cb3af6d78fe30fa7c62b065e9b89773cf53c87"}
+{"ts": "2025-08-26T07:16:58Z", "user": "assistant", "text": "응답(샘플): \"이 여기 부분이 이제.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "0b0b41b7bb1dfaf1fa5cff4976c1ed0de8ad37e7"}
+{"ts": "2025-08-26T07:17:01Z", "user": "user", "text": "어 사실.", "msg_id": "52fb9a5e9793a23be97e83cf8e6f560f25c61072"}
+{"ts": "2025-08-26T07:17:01Z", "user": "assistant", "text": "응답(샘플): \"어 사실.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "00c09c80880c7e312eec80be332e44d44e4085b5"}
+{"ts": "2025-08-26T07:17:08Z", "user": "user", "text": "더 원래 있던 데이터를 음.", "msg_id": "d29e131e70b5406a121175a594f55075b8a5740a"}
+{"ts": "2025-08-26T07:17:08Z", "user": "assistant", "text": "응답(샘플): \"더 원래 있던 데이터를 음.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "2a870274a76f3f038bf131bbf85eb0d668bc34da"}
+{"ts": "2025-08-26T07:17:17Z", "user": "user", "text": "트레이셋이랑 밸리데이션스에 만드는 부분이 있는데, 원래 있던 여기를 바탕으로 해서 나눠가지고 새로운 경로로.", "msg_id": "7707dec7b60c00ef031cf8f9dd8e604a49cbccfc"}
+{"ts": "2025-08-26T07:17:17Z", "user": "assistant", "text": "응답(샘플): \"트레이셋이랑 밸리데이션스에 만드는 부분이 있는데, 원래 있던 여기를 바탕으로 해서 나눠가지고 새로운 경로로.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "fc2b4da7a85ee39d33b6ad2ab3ce400eab05d336"}
+{"ts": "2025-08-26T07:17:19Z", "user": "user", "text": "네.", "msg_id": "dd0c6146696a3e5ab10c87ea5dbe355d31cfbd79"}
+{"ts": "2025-08-26T07:17:19Z", "user": "assistant", "text": "응답(샘플): \"네.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "ac2e152b4829457ac5850b21b24aac9743826a80"}
+{"ts": "2025-08-26T07:17:23Z", "user": "user", "text": "아들을 불러서 학습할 때는?", "msg_id": "cc66ab43929b4d740884afc5515e0853d55087d7"}
+{"ts": "2025-08-26T07:17:23Z", "user": "assistant", "text": "응답(샘플): \"아들을 불러서 학습할 때는?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "8f9a23570b2b7d31638285f834148a2626543589"}
+{"ts": "2025-08-26T07:17:26Z", "user": "user", "text": "딱히 필요는 없다 보니까 그냥.", "msg_id": "14a4cc8bf5771a32644383aa1b35b1e26b888677"}
+{"ts": "2025-08-26T07:17:26Z", "user": "assistant", "text": "응답(샘플): \"딱히 필요는 없다 보니까 그냥.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "1daca57dc46572744ffb7cca8682d483b01fe24c"}
+{"ts": "2025-08-26T07:17:30Z", "user": "user", "text": "이미 학습할 때 만들어진 여 프리페.", "msg_id": "189faa08d03ae3ac82046ca2707da7b3093b8031"}
+{"ts": "2025-08-26T07:17:30Z", "user": "assistant", "text": "응답(샘플): \"이미 학습할 때 만들어진 여 프리페.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "7e035a99301816e32f69ce4ef2c627f23662ec5e"}
+{"ts": "2025-08-26T07:17:37Z", "user": "user", "text": "이거를 이거에 있는 것만 불러와서 그거를 직접.", "msg_id": "a0cb273d693909e372fa397d3aa7ab0d7f27d01f"}
+{"ts": "2025-08-26T07:17:37Z", "user": "assistant", "text": "응답(샘플): \"이거를 이거에 있는 것만 불러와서 그거를 직접.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "fec086a899c60080c19caed9e382544df7208af1"}
+{"ts": "2025-08-26T07:17:40Z", "user": "user", "text": "주로.", "msg_id": "c81446e4da78d84945199caa7da62a58a4aa377f"}
+{"ts": "2025-08-26T07:17:40Z", "user": "assistant", "text": "응답(샘플): \"주로.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "49997e2dac0ef806efb1616644687c7f4719ff68"}
+{"ts": "2025-08-26T07:17:45Z", "user": "user", "text": "이 않을까 해서 그것이 더하고 있었거든요 어?", "msg_id": "400259320503f047c15fc9dfe6e3f3188c95dac2"}
+{"ts": "2025-08-26T07:17:45Z", "user": "assistant", "text": "응답(샘플): \"이 않을까 해서 그것이 더하고 있었거든요 어?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "8d1988d2298a0215855102ddf9025172bccb6fc7"}
+{"ts": "2025-08-26T07:17:50Z", "user": "user", "text": "일 없이 아, 근데 우리가 여기서 넣어야 될 데이터는?", "msg_id": "37540a7b9a768f563340310f32c87bfb553ff687"}
+{"ts": "2025-08-26T07:17:50Z", "user": "assistant", "text": "응답(샘플): \"일 없이 아, 근데 우리가 여기서 넣어야 될 데이터는?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "c5d2d7773084ace09dd21ae2aadc67a08e033123"}
+{"ts": "2025-08-26T07:17:54Z", "user": "user", "text": "어.", "msg_id": "2693bef6267222bf7b9f1a987ac2611c104f1648"}
+{"ts": "2025-08-26T07:17:54Z", "user": "assistant", "text": "응답(샘플): \"어.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "714c423b7c769e9ddc2ce6ae00fff890d05e8915"}
+{"ts": "2025-08-26T07:18:00Z", "user": "user", "text": "아 옛날에 그 최종적 훈련한테 그 데이터는?", "msg_id": "e5cffb09a83b13462f49e46aa147bacb54ea117b"}
+{"ts": "2025-08-26T07:18:00Z", "user": "assistant", "text": "응답(샘플): \"아 옛날에 그 최종적 훈련한테 그 데이터는?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "4ff4b53d3ccfb5e69512588fea0096f16e5e94cb"}
+{"ts": "2025-08-26T07:18:04Z", "user": "user", "text": "이게 뭐지?", "msg_id": "cce9de065b70d07b86ed100383db9c2878fadd70"}
+{"ts": "2025-08-26T07:18:04Z", "user": "assistant", "text": "응답(샘플): \"이게 뭐지?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "596394ffa0b63c769bf66e3f8edeeb63a0456b2c"}
+{"ts": "2025-08-26T07:18:09Z", "user": "user", "text": "엑스파일은 없는 거죠?", "msg_id": "4747056124969bbf652ac2a01b2c338c89e2d4d4"}
+{"ts": "2025-08-26T07:18:09Z", "user": "assistant", "text": "응답(샘플): \"엑스파일은 없는 거죠?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "6400da76fdd150f558de47a969fd7da3d9475f68"}
+{"ts": "2025-08-26T07:18:14Z", "user": "user", "text": "지켜봐야 되는 거죠?", "msg_id": "b479f68db88a2ed450d494e3d593a5810f2fa260"}
+{"ts": "2025-08-26T07:18:14Z", "user": "assistant", "text": "응답(샘플): \"지켜봐야 되는 거죠?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "40b3471dd0fbeabe6959566532942793d501031a"}
+{"ts": "2025-08-26T07:18:21Z", "user": "user", "text": "있으니까 뭐 CSV 만 있으니까.", "msg_id": "a45148789986d77655dc2a71c09aa8e1f272f8bf"}
+{"ts": "2025-08-26T07:18:21Z", "user": "assistant", "text": "응답(샘플): \"있으니까 뭐 CSV 만 있으니까.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "a95cdb9a10eaa984c7edd6627574c952c79d505a"}
+{"ts": "2025-08-26T07:18:25Z", "user": "user", "text": "예, 그렇게 하지 않아도?", "msg_id": "de88982e1d2d8166b5f515e7a1149feea2f6653e"}
+{"ts": "2025-08-26T07:18:25Z", "user": "assistant", "text": "응답(샘플): \"예, 그렇게 하지 않아도?\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "dc8c2c7e46c4e1c2dba741b54b3b1105162ce2e3"}
+{"ts": "2025-08-26T07:18:31Z", "user": "user", "text": "카프카에 지금 데이터들이 저장되어 있는 것들이 있거든요.", "msg_id": "35cba8ae5c0b8f8e2d52ef8e17c05f96209de05c"}
+{"ts": "2025-08-26T07:18:31Z", "user": "assistant", "text": "응답(샘플): \"카프카에 지금 데이터들이 저장되어 있는 것들이 있거든요.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "2208c44ec85ef1c5eb5239965661cb8871d07b52"}
+{"ts": "2025-08-26T07:18:34Z", "user": "user", "text": "이러다가.", "msg_id": "f12031c102c42c90769080cc300bbf47e409546d"}
+{"ts": "2025-08-26T07:18:34Z", "user": "assistant", "text": "응답(샘플): \"이러다가.\"라고 말씀하셨네요. 현재는 OpenAI API 키가 설정되지 않았습니다.", "msg_id": "9160e2f35915f7a444ea716b4d771492b76df4b1"}
+{"ts": "2025-08-26T07:22:38Z", "user": "user", "text": "왜?", "msg_id": "e7cf95b82e798745fa30d8fb5c120a9053be8f17"}
+{"ts": "2025-08-26T07:22:43Z", "user": "user", "text": "목소리랑.", "msg_id": "939d778c6a3870e4acdc1e6d753bcec8d033de11"}
+{"ts": "2025-08-26T07:22:47Z", "user": "user", "text": "예.", "msg_id": "528ef58f045bd139dfed76bcce0e076168b1b419"}
+{"ts": "2025-08-26T07:23:07Z", "user": "user", "text": "아.", "msg_id": "1899beca25e83f4f69e0779daa82f080efd1a78e"}
+{"ts": "2025-08-26T07:23:14Z", "user": "user", "text": "아.", "msg_id": "a9ec7fa57828cee55387bfe7e82cf1ba7556da0b"}
+{"ts": "2025-08-26T07:23:21Z", "user": "user", "text": "아 예.", "msg_id": "4ca73aa41787e2b803a5c125b20877b25ac63213"}
+{"ts": "2025-08-26T08:20:06Z", "user": "user", "text": "주식 또는 계속 중 하나다.", "msg_id": "9a76df0a51fbf9b874b804b3f37e80bcfd9971b8"}
+{"ts": "2025-08-26T08:20:11Z", "user": "user", "text": "아.", "msg_id": "7c40dcd75c7776875a5d859b2652968d4d5c8bba"}
+{"ts": "2025-08-26T08:20:15Z", "user": "user", "text": "어.", "msg_id": "f89471d3791f7611c1d1f232bf566384ac8d0d6e"}
+{"ts": "2025-08-26T08:20:21Z", "user": "user", "text": "어.", "msg_id": "d750c707b9e20839f6e72391d0a9f0c5fb219d5b"}
+{"ts": "2025-08-26T08:20:29Z", "user": "user", "text": "어 어?", "msg_id": "d1d608ad78552b99a748f420d70c4bdbefe75173"}
+{"ts": "2025-08-26T08:20:39Z", "user": "user", "text": "인지 상태 확인 중이.", "msg_id": "03b8340525ce1cc1c9ae90013f0733d883d188e2"}
+{"ts": "2025-08-26T08:20:43Z", "user": "user", "text": "예.", "msg_id": "499c69eb34c92f658137d033560913d4fec55262"}
+{"ts": "2025-08-26T08:20:48Z", "user": "user", "text": "어.", "msg_id": "13a2dc18761a42a238aa04f481c1a0aa54bacc8a"}
+{"ts": "2025-08-26T08:22:28Z", "user": "user", "text": "아.", "msg_id": "faa4065625e7092f2b3eb85c4c348e2823cc5946"}
+{"ts": "2025-08-26T08:22:36Z", "user": "user", "text": "좋아요.", "msg_id": "0d4965cb3b3b0bdbe62a0294774c1e793471f6ed"}
+{"ts": "2025-08-26T08:22:44Z", "user": "user", "text": "계속 좀.", "msg_id": "582c2b3db27a7d7525ead7c5d1c57057d6af4d04"}
+{"ts": "2025-08-26T08:22:49Z", "user": "user", "text": "어.", "msg_id": "6ea9ca53d95cabac5479e03c9767d1b7abd53d1c"}
+{"ts": "2025-08-26T08:22:53Z", "user": "user", "text": "어.", "msg_id": "4b1e71a223f325b572856725aef2ad9b02b02d04"}
+{"ts": "2025-08-26T08:42:47Z", "user": "user", "text": "주식 또는 계속 증.", "msg_id": "a7b6f5eb374ba661794a4d55375b184ff1e59e3e"}
