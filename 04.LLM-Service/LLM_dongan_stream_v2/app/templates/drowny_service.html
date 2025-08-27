@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#071018">
+  <meta name="description" content="AI 기반 졸음운전 방지 시스템">
+  <title>No Drowsy!! 🚗</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+</head>
+<body>
+  <main id="device" class="device-viewport">
+    <section id="stageArea" class="stage-area bg-normal" role="region" aria-label="상태 영역">
+      <h1 id="stageLabel" class="stage-label">정상</h1>
+      <div id="dValue" class="d-value">졸음 지수 : --</div>
+      <div id="centerMessage" class="center-message" aria-live="assertive"></div>
+    </section>
+
+    <aside id="chatOverlay" class="chat-overlay" role="complementary" aria-label="채팅 영역">
+      <div id="chatLog" class="chat-log" aria-live="polite" aria-atomic="false"></div>
+      
+      <form class="chat-controls" role="form" aria-label="채팅 입력" onsubmit="return false;">
+        <input 
+          id="chatInput" 
+          type="text" 
+          placeholder="메시지를 입력하거나 음성으로 말하세요" 
+          autocomplete="off"
+          maxlength="500"
+          spellcheck="false"
+          aria-label="메시지 입력" 
+        />
+      </form>
+    </aside>
+  </main>
+  
+  <!-- Flask 템플릿 사용시 -->
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  
+  <!-- 정적 경로 사용시 (위 Flask 코드 대신 사용) -->
+  <!-- <script src="/static/js/app.js"></script> -->
+</body>
+</html>
