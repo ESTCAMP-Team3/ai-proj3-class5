@@ -4,7 +4,7 @@ from typing import Optional, Tuple, Dict, Any
 import numpy as np
 import cv2
 import mediapipe as mp
-from .config import MP_MAX_NUM_FACES, MP_MIN_DET_CONF, MP_MIN_TRACK_CONF, MP_STATIC_IMAGE_MODE
+from config import MP_MAX_NUM_FACES, MP_MIN_DET_CONF, MP_MIN_TRACK_CONF, MP_STATIC_IMAGE_MODE
 
 # FaceMesh landmark indices for EAR (approximate mapping from 468-pt mesh)
 LEFT_EYE = [33, 160, 158, 133, 153, 144]

@@ -4,8 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 import uvicorn
 
-from .models import StartStreamRequest, StopStreamRequest, StreamStatus, LastRecord
-from .manager import StreamManager
+from models import StartStreamRequest, StopStreamRequest, StreamStatus, LastRecord
+from manager import StreamManager
 
 app = FastAPI(title="JPEG Stream Mediapipe Analyzer", version="1.0.0")
 app.add_middleware(

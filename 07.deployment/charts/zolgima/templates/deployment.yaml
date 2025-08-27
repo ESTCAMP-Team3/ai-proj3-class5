@@ -69,3 +69,50 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+---
+{{- if .Values.mpipe.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zolgima-mpipe
+  labels:
+    app: zolgima-mpipe
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zolgima-mpipe
+  template:
+    metadata:
+      labels:
+        app: zolgima-mpipe
+    spec:
+      containers:
+        - name: zolgima-mpipe
+          image: "{{ .Values.mpipe.image.repository }}:{{ .Values.mpipe.image.tag }}"
+          imagePullPolicy: {{ .Values.mpipe.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.mpipe.service.port }}
+          volumeMounts:
+            - name: stream-data
+              mountPath: {{ .Values.sharedData.mountPath }}
+          {{- end }}
+      {{- if .Values.sharedData.enabled }}
+      volumes:
+        - name: stream-data
+          persistentVolumeClaim:
+            claimName: {{ .Values.sharedData.name | default (printf "%s-shareddata" (include "zolgima.fullname" .)) }}
+      {{- end }}
+      {{- with .Values.mpipe.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mpipe.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.mpipe.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

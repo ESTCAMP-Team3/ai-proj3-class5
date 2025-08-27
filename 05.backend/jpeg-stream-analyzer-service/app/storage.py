@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Dict, Any, Optional
 from pathlib import Path
 import json, time
-from .config import STATE_DIR
+from config import STATE_DIR
 
 class StateStore:
     def __init__(self, state_dir: Path | None = None):

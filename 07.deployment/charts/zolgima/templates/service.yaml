@@ -13,3 +13,21 @@ spec:
       name: http
   selector:
     {{- include "zolgima.selectorLabels" . | nindent 4 }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: zolgima-mpipe
+  labels:
+    app: zolgima-mpipe
+spec:
+  type: ClusterIP
+  selector:
+    app: zolgima-mpipe
+  ports:
+    - port: {{ .Values.mpipe.service.port }}
+      targetPort: {{ .Values.mpipe.service.port }}
+      protocol: TCP
+      name: http

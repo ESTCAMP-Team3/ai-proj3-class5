@@ -4,13 +4,13 @@ from dataclasses import dataclass, asdict
 from typing import Optional, Dict, Any
 import threading, time
 
-from .frame_reader import JPEGFolderReader, FrameSpec
-from .mediapipe_analyzer import MediaPipeAnalyzer
-from .kafka_client import KafkaJSONProducer
-from .storage import StateStore
+from frame_reader import JPEGFolderReader, FrameSpec
+from mediapipe_analyzer import MediaPipeAnalyzer
+from kafka_client import KafkaJSONProducer
+from storage import StateStore
 
-from .metrics import MetricsTracker
-from .config import EAR_CLOSED_TH, YAWN_MAR_TH, BLINK_MIN_CLOSED_FRAMES, RATE_WINDOW_SEC
+from metrics import MetricsTracker
+from config import EAR_CLOSED_TH, YAWN_MAR_TH, BLINK_MIN_CLOSED_FRAMES, RATE_WINDOW_SEC
 
 
 @dataclass
