@@ -46,7 +46,7 @@ class JPEGFolderReader:
                 frame = self._read_frame(path)
                 if frame is not None:
                     now_ms = int(time.time() * 1000)
-                    yield self._next_idx, now_ms, frame
+                    yield self._next_idx, now_ms, frame, path
                     self._next_idx += 1
                 else:
                     # Corrupt or in-progress write; wait a bit and retry

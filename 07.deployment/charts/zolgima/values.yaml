@@ -135,7 +135,7 @@ mpipe:
   enabled: true
   image:
     repository: harbor.dongango.com/aiclass5/zolgima-mpipe
-    tag: "0.4"
+    tag: "0.7"
     pullPolicy: IfNotPresent
   service:
     port: 8000

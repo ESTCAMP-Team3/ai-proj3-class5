@@ -172,6 +172,66 @@ def create_stream_blueprint() -> Blueprint:
     def upload_jpeg():
         """
         헤더:
+        X-Session-Id: 세션 식별자(클라이언트 생성)
+        X-Seq: 프레임 시퀀스 번호 (0..)
+        바디:
+        image/jpeg 바이트 (chunked 가능)
+        """
+        st = _get_state()
+
+        session_id = request.headers.get("X-Session-Id")
+        seq = request.headers.get("X-Seq")
+        content_type = (request.headers.get("Content-Type") or "").lower()
+
+        if not session_id or seq is None:
+            return abort(400, "Missing X-Session-Id or X-Seq")
+
+        try:
+            seq_num = int(seq)
+        except ValueError:
+            return abort(400, "X-Seq must be int")
+
+        if "image/jpeg" not in content_type:
+            return abort(415, f"Unsupported Content-Type: {content_type}")
+
+        # 세션 폴더 준비
+        sess_dir = st.INBOX_DIR / _safe_id(session_id)
+        sess_dir.mkdir(parents=True, exist_ok=True)
+
+        # 파일 경로 (원자적 저장: .part -> 최종)
+        fname = f"{seq_num:06d}.jpg"
+        tmp_path = sess_dir / (fname + ".part")
+        final_path = sess_dir / fname
+
+        # === 핵심 변경: 스트리밍으로 바로 파일에 기록 ===
+        # request.stream 은 WSGI 입력 스트림으로 chunked body도 지원합니다.
+        CHUNK = 64 * 1024  # 64KB 권장
+        with open(tmp_path, "wb") as f:
+            while True:
+                chunk = request.stream.read(CHUNK)
+                if not chunk:
+                    break
+                f.write(chunk)
+            # 속도를 우선할 때는 flush/fsync 생략 (내구성 강화 원하면 아래 주석 해제)
+            # f.flush()
+            # os.fsync(f.fileno())
+
+        # 원자적 교체 (다른 프로세스가 항상 완성본만 보도록)
+        os.replace(tmp_path, final_path)
+
+        # 후속 처리 큐에 전달
+        st.work_q.put(final_path)
+
+        # 지연 최소화를 위해 본문 없이 204 반환 (클라가 본문 안 읽는다면 가장 빠름)
+        #return Response(status=204)
+
+        # 만약 기존 JSON 응답을 유지하고 싶다면 위 204 대신 아래를 사용:
+        return jsonify(ok=True, saved=str(final_path))
+
+    @bp.post("/upload_old")
+    def upload_jpeg_old():
+        """
+        헤더:
           X-Session-Id: 세션 식별자(클라이언트 생성)
           X-Seq: 프레임 시퀀스 번호 (0..)
         바디:

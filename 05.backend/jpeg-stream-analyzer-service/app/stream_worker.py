@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 from typing import Optional, Dict, Any
 import threading, time
+import os
 
 from frame_reader import JPEGFolderReader, FrameSpec
 from mediapipe_analyzer import MediaPipeAnalyzer
@@ -82,7 +83,7 @@ class StreamWorker(threading.Thread):
 
     def run(self):
         try:
-            for idx, ts_ms, frame in self._reader:
+            for idx, ts_ms, frame, src_path in self._reader:
                 if self._stop.is_set():
                     break
                 # Analyze
@@ -105,6 +106,23 @@ class StreamWorker(threading.Thread):
                 # Persist last
                 if self.frames_emitted % 10 == 0:
                     self.state.save_last(self.cfg.topic, record)
+
+                # (신규) 처리 완료한 원본 파일 rename: completed-<원래파일명>
+                try:
+                    dirname, base = os.path.split(src_path)
+                    new_path = os.path.join(dirname, f"completed-{base}")
+                    # 이미 완료 표시된 파일이라면 skip
+                    if not os.path.basename(src_path).startswith("completed-"):
+                        # 기존에 동일 이름 있으면 덮어쓰기 회피
+                        if os.path.exists(new_path):
+                            # 중복 방지: completed-<base>.<epoch>
+                            import time as _t
+                            new_path = os.path.join(dirname, f"completed-{int(_t.time())}-{base}")
+                        os.replace(src_path, new_path)
+                except Exception as e:
+                    # rename 실패는 치명 아님 → 로그만
+                    print(f"[worker:{self.cfg.topic}] rename failed for {src_path}: {e}")
+
         finally:
             # Persist last on exit and flush
             if self.last_frame_idx > 0:
