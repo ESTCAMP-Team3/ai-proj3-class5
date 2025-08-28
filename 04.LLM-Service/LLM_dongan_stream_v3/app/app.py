@@ -256,6 +256,65 @@ def stream_upload():
         print(f"❌ /stream/upload 오류: {e}")
         return jsonify({"error": str(e)}), 500
 
+@app.route("/api/analyze_voice_command", methods=["POST"])
+def analyze_voice_command():
+    """GPT API를 활용한 지능형 음성 명령 분석"""
+    try:
+        data = request.get_json()
+        text = data.get("text", "").strip()
+        context = data.get("context", {})
+        
+        if not text:
+            return jsonify({"error": "Empty text"}), 400
+        
+        # LLM 서비스를 통한 음성 명령 분석
+        try:
+            from LLM_service import DrowsinessLLMService
+            
+            service = DrowsinessLLMService()
+            result = service.analyze_voice_command(text, context)
+            
+            return jsonify(result)
+            
+        except ImportError:
+            print("LLM 서비스 없음, 기본 분석 사용")
+            # 기본 키워드 기반 분석
+            text_lower = text.lower()
+            
+            music_start_words = ['음악', '노래', '뮤직', 'music', '틀어', '재생', '플레이', 'play', '켜', '시작']
+            music_stop_words = ['꺼', '중지', '멈춰', '스톱', 'stop', '끝', '그만', '정지']
+            
+            if any(word in text_lower for word in music_start_words):
+                return jsonify({
+                    "action": "start_music",
+                    "confidence": 0.8,
+                    "reasoning": "음악 재생 키워드 감지"
+                })
+            elif any(word in text_lower for word in music_stop_words):
+                return jsonify({
+                    "action": "stop_music", 
+                    "confidence": 0.8,
+                    "reasoning": "음악 중지 키워드 감지"
+                })
+            else:
+                return jsonify({
+                    "action": "general_chat",
+                    "confidence": 0.9,
+                    "reasoning": "일반 대화로 판단"
+                })
+                
+        except Exception as e:
+            print(f"음성 명령 분석 오류: {e}")
+            return jsonify({
+                "action": "general_chat",
+                "confidence": 0.5,
+                "reasoning": f"분석 실패: {str(e)}"
+            })
+            
+    except Exception as e:
+        print(f"❌ /api/analyze_voice_command 오류: {e}")
+        return jsonify({"error": "Internal server error"}), 500
+
 @app.route("/chat_send", methods=["POST"])
 def chat_send():
     """프론트엔드에서 채팅 메시지를 받아 처리"""
@@ -287,7 +346,22 @@ def chat_send():
                 d_value=current_state["level_code"] if current_state else 30,
                 user_input=text
             )
-            response_text = response.get('announcement', '') + " " + response.get('question', '')
+            
+            # 자연스러운 응답 텍스트만 추출 (시스템 메시지 제거)
+            announcement = response.get('announcement', '')
+            question = response.get('question', '')
+            
+            # "announcement:", "question:" 같은 시스템 태그 제거
+            announcement_clean = announcement.replace('announcement:', '').replace('안ouncement:', '').strip()
+            question_clean = question.replace('question:', '').strip()
+            
+            # 자연스러운 대화문만 조합
+            if question_clean:
+                response_text = question_clean  # 질문이 있으면 질문만 (더 자연스러움)
+            elif announcement_clean:
+                response_text = announcement_clean
+            else:
+                response_text = "안전운전 하세요."
             
         except ImportError as e:
             print(f"LLM 모듈 임포트 오류: {e}")
