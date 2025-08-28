@@ -9,6 +9,13 @@
 </head>
 <body>
   <div id="device" class="device-viewport">
+    <!-- 실시간 카메라 스트림 영역 추가 -->
+    <div id="videoStreamArea" class="video-stream-area">
+      <h3>실시간 카메라</h3>
+      <img id="streamView" class="stream-view" alt="실시간 영상"/>
+      <div id="streamStatus" class="stream-status">연결 대기중...</div>
+    </div>
+    
     <div id="stageArea" class="stage-area bg-normal" role="region" aria-label="상태 영역">
       <div id="stageLabel" class="stage-label">정상</div>
       <div id="dValue" class="d-value">D: --</div>
@@ -28,5 +35,60 @@
   </div>
 
   <script src="/static/js/app.js"></script>
+  <script>
+    // 실시간 카메라 스트림 연결
+    let streamWs;
+    function connectVideoStream() {
+      const streamImg = document.getElementById('streamView');
+      const streamStatus = document.getElementById('streamStatus');
+      
+      // phone-cam-transfer 서버 주소 (HTTPS 포트 8443)
+      const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//localhost:8443/ws/viewer`;
+      
+      streamWs = new WebSocket(wsUrl);
+      streamWs.binaryType = 'blob';
+      
+      streamWs.onopen = () => {
+        streamStatus.textContent = '영상 연결됨';
+        streamStatus.style.color = '#4CAF50';
+      };
+      
+      streamWs.onclose = () => {
+        streamStatus.textContent = '영상 연결 끊어짐';
+        streamStatus.style.color = '#f44336';
+        // 2초 후 자동 재연결 시도
+        setTimeout(connectVideoStream, 2000);
+      };
+      
+      streamWs.onerror = () => {
+        streamStatus.textContent = '영상 연결 오류';
+        streamStatus.style.color = '#ff9800';
+      };
+      
+      streamWs.onmessage = (ev) => {
+        try {
+          const url = URL.createObjectURL(ev.data);
+          streamImg.onload = () => URL.revokeObjectURL(url);
+          streamImg.src = url;
+        } catch (e) {
+          console.error('영상 표시 오류:', e);
+        }
+      };
+    }
+
+    // 페이지 로드 시 영상 스트림 연결
+    window.addEventListener('load', () => {
+      // 1초 후 연결 시도 (다른 초기화 완료 후)
+      setTimeout(connectVideoStream, 1000);
+    });
+
+    // 페이지 언로드 시 WebSocket 정리
+    window.addEventListener('beforeunload', () => {
+      if (streamWs && streamWs.readyState <= 1) {
+        streamWs.close();
+      }
+    });
+  </script>
 </body>
 </html>

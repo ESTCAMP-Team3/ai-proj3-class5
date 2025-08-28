@@ -35,6 +35,48 @@ body{
   background: linear-gradient(180deg, var(--bg-dark-1) 0%, var(--bg-dark-2) 100%);
 }
 
+/* === 실시간 영상 스트림 영역 === */
+.video-stream-area {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 180px;
+  background: rgba(0,0,0,0.8);
+  border-radius: 12px;
+  padding: 8px;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.video-stream-area h3 {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+  text-align: center;
+}
+
+.stream-view {
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  background: #000;
+  display: block;
+  max-height: 120px;
+  object-fit: cover;
+}
+
+.stream-status {
+  color: #ccc;
+  font-size: 10px;
+  text-align: center;
+  margin-top: 4px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  background: rgba(255,255,255,0.05);
+}
+
 /* === 상태 영역 === */
 #stageArea {
   position: absolute;
