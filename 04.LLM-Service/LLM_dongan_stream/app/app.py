@@ -13,6 +13,7 @@ import time
 import os
 from werkzeug.utils import secure_filename
 from flask_sock import Sock  # pip install flask-sock
+from stream_service import stream_state
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.config["SECRET_KEY"] = "supersecret"   # 환경변수로 관리 권장
@@ -68,6 +69,7 @@ def login():
             initial_stage = stage_from_level(initial_level)
             insert_state_history(user["id"], session_token, initial_level, initial_stage)
 
+            stream_state.session_token = session_token  # LLM 서비스에 세션 토큰 주입
             return redirect(url_for("index"))
         else:
             return "로그인 실패", 401

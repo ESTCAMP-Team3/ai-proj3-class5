@@ -2,6 +2,6 @@
 
 docker buildx build \
   --platform linux/amd64,linux/arm64 \
-  -t harbor.dongango.com/aiclass5/zolgima-svr:0.6 \
+  -t harbor.dongango.com/aiclass5/zolgima-state:0.3 \
   -f Dockerfile . \
   --push

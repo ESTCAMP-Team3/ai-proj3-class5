@@ -116,3 +116,39 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
+---
+{{- if .Values.state.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zolgima-state
+  labels:
+    app: zolgima-state
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: zolgima-state
+  template:
+    metadata:
+      labels:
+        app: zolgima-state
+    spec:
+      containers:
+        - name: zolgima-state
+          image: "{{ .Values.state.image.repository }}:{{ .Values.state.image.tag }}"
+          imagePullPolicy: {{ .Values.state.image.pullPolicy }}
+      {{- with .Values.state.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.state.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.state.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+{{- end }}   # ← 이 줄이 필요합니다

@@ -12,6 +12,16 @@ from confluent_kafka import Producer
 
 from flask import Blueprint, current_app, request, jsonify, abort
 
+## session_token 을 위한 single run
+class _StreamServiceState:
+    def __init__(self):
+        self.session_token = None   # 로그인 후 주입받을 값
+        self.other_state = {}       # 추가 상태 저장 가능
+
+# ✅ 모듈 전역에 싱글턴 객체 생성
+stream_state = _StreamServiceState()
+
+
 # ---- 내부 상태를 app.extensions에 보관하기 위한 컨테이너 ----
 class _StreamServiceState:
     def __init__(self, data_dir: Path, processing_mode: str):
@@ -50,6 +60,7 @@ class _StreamServiceState:
         payload = {
             "session-id": session_id,    # 일반 표기(소비자 호환용)
             "type": stream_type,
+            "session_token" : stream_state.session_token
         }
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
         try:
@@ -106,7 +117,7 @@ def _forward_to_outbox(state: _StreamServiceState, src: Path):
     dst = state.OUTBOX_DIR / rel
     dst.parent.mkdir(parents=True, exist_ok=True)
     shutil.move(str(src), str(dst))
-    _log("Forwarded to OUTBOX", {"dst": str(dst)})
+    ## _log("Forwarded to OUTBOX", {"dst": str(dst)})
 
 
 # ---- 블루프린트 팩토리 ----
