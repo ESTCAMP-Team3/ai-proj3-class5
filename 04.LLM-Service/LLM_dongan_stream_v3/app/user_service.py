@@ -94,7 +94,7 @@ def get_latest_states_for_all_active_sessions():
 
     # 활성 세션 목록 (user_session 테이블 기준)
     cur.execute("""
-      SELECT s.session_id, s.user_id, u.username
+      SELECT s.session_token, s.user_id, u.username
       FROM user_session s
       JOIN users u ON u.id = s.user_id
       WHERE s.is_active = 1
@@ -141,16 +141,17 @@ def get_active_sessions():
     conn.close()
     return rows
 
-def get_latest_state_for_session(session_token: str):
-    """지정 세션의 최신 상태 1건 반환. 없으면 None"""
+def get_user_by_session_token(session_token: str):
+    """세션 토큰으로 사용자 정보 조회"""
     conn = get_db_connection()
     cur = conn.cursor(dictionary=True)
     cur.execute("""
-        SELECT id, user_id, session_token, level_code, stage, created_at
-        FROM driver_state_history
-        WHERE session_token = %s
-        ORDER BY id DESC
-        LIMIT 1
+        SELECT s.user_id, s.session_token, u.username, u.name
+        FROM user_session s
+        JOIN users u ON u.id = s.user_id
+        WHERE s.session_token = %s 
+          AND s.is_active = 1
+          AND (s.expires_at IS NULL OR s.expires_at > UTC_TIMESTAMP())
     """, (session_token,))
     row = cur.fetchone()
     cur.close()
