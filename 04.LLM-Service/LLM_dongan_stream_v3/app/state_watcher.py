@@ -5,8 +5,8 @@ import threading
 import hashlib
 from datetime import datetime
 
-DEFAULT_STABILITY_SECONDS = float(os.getenv("STABILITY_SECONDS", "2.0"))
-DEFAULT_COOLDOWN_SECONDS  = float(os.getenv("COOLDOWN_SECONDS",  "30.0"))
+DEFAULT_STABILITY_SECONDS = float(os.getenv("STABILITY_SECONDS", "0.5"))  # 0.5초로 단축
+DEFAULT_COOLDOWN_SECONDS  = float(os.getenv("COOLDOWN_SECONDS",  "5.0"))   # 5초로 단축
 
 class StateDBWatcher:
     """

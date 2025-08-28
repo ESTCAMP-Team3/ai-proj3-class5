@@ -551,3 +551,57 @@ if __name__ == "__main__":
         if response['action_suggestion']:
             print(f"제안: {response['action_suggestion']}")
         print("-" * 50)
+
+def process_user_input(user_input: str, current_stage: str, session_id: str) -> Dict:
+    """
+    외부에서 호출 가능한 간단한 인터페이스 함수
+    
+    Args:
+        user_input: 사용자 입력 텍스트
+        current_stage: 현재 졸음 단계
+        session_id: 세션 ID
+        
+    Returns:
+        dict: 응답 메시지와 추가 정보
+    """
+    try:
+        # 서비스 인스턴스 생성 (세션별로 관리하는 것이 이상적이나 간단히 처리)
+        service = DrowsinessLLMService()
+        
+        # D값 매핑 (stage에서 추정)
+        d_value_map = {
+            '정상': 30,
+            '의심경고': 40,
+            '집중모니터링': 50,
+            '개선': 60,
+            'L1': 70,
+            'L2': 80,
+            'L3': 90,
+            'FAILSAFE': 999
+        }
+        
+        d_value = d_value_map.get(current_stage, 50)
+        
+        # 응답 생성
+        response = service.generate_contextual_response(
+            stage=current_stage,
+            d_value=d_value,
+            user_input=user_input
+        )
+        
+        # app.py에서 기대하는 형식으로 변환
+        return {
+            "message": response.get('announcement', '') + 
+                      (" " + response.get('question', '') if response.get('question') else ""),
+            "actions": response.get('safety_actions', []) if 'safety_actions' in response else [],
+            "audio_file": response.get('music', {}).get('track') if response.get('music') else None
+        }
+        
+    except Exception as e:
+        print(f"process_user_input 오류: {e}")
+        # 기본 응답
+        return {
+            "message": f"현재 {current_stage} 상태입니다. 안전운전 하세요.",
+            "actions": [],
+            "audio_file": None
+        }
