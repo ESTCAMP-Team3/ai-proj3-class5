@@ -53,6 +53,37 @@ const beep = (vol=0.5) => {
     } catch(e) { console.warn('beep fail', e); }
 };
 
+// === GPT API 기반 지능형 음성 명령 분석 ===
+const analyzeMusicCommand = async (transcript) => {
+    try {
+        const response = await fetch('/api/analyze_voice_command', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                text: transcript,
+                context: {
+                    current_music_state: backgroundMusicMode,
+                    stage: lastStage
+                }
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`API 응답 오류: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        console.log('🤖 AI 분석 결과:', result);
+        return result;
+        
+    } catch (error) {
+        console.warn('🤖 AI 명령 분석 실패:', error);
+        throw error;
+    }
+};
+
 // === 텍스트 정리 함수 ===
 const cleanText = (text) => {
     if (!text) return '';
@@ -91,7 +122,7 @@ const resumeRecognition = () => {
     }
 };
 
-// === 개선된 TTS (에코 방지) ===
+// === 개선된 TTS (에코 방지 + 안정성 강화) ===
 const speak = (text, vol=1.0) => {
     if (!speechSynthesis || !text || audioState.isProcessingResponse) return;
     
@@ -105,44 +136,59 @@ const speak = (text, vol=1.0) => {
         return;
     }
     
+    // 빈 텍스트나 너무 짧은 텍스트 무시
+    if (cleanedText.length < 2) {
+        console.log('🔊 텍스트가 너무 짧음:', cleanedText);
+        return;
+    }
+    
     pauseRecognition();
     audioState.isTTSPlaying = true;
     audioState.lastTTSText = cleanedText;
     audioState.lastTTSTime = now;
     
     try {
-        speechSynthesis.cancel();
-    } catch(e) {}
-    
-    const utter = new SpeechSynthesisUtterance(cleanedText);
-    const voices = speechSynthesis.getVoices();
-    const ko = voices.find(v => v.lang?.startsWith('ko') && /female|Google|Noto|Yuna/i.test(v.name));
-    if (ko) utter.voice = ko;
-    utter.volume = Math.min(1.5, vol);
-    utter.rate = 1.0;
-    
-    utter.onstart = () => {
-        console.log('🔊 TTS 재생 중');
-        audioState.isTTSPlaying = true;
-    };
-    
-    utter.onend = () => {
-        console.log('🔊 TTS 완료');
-        audioState.isTTSPlaying = false;
+        speechSynthesis.cancel(); // 이전 음성 정지
+        
+        // 약간의 지연으로 안정성 확보
         setTimeout(() => {
-            if (!audioState.isTTSPlaying) {
+            const utter = new SpeechSynthesisUtterance(cleanedText);
+            const voices = speechSynthesis.getVoices();
+            const ko = voices.find(v => v.lang?.startsWith('ko') && /female|Google|Noto|Yuna/i.test(v.name));
+            if (ko) utter.voice = ko;
+            utter.volume = Math.min(1.0, vol); // 최대 볼륨 제한
+            utter.rate = 0.9; // 조금 느리게 (명확성)
+            utter.pitch = 1.0;
+            
+            utter.onstart = () => {
+                console.log('🔊 TTS 재생 시작:', cleanedText.substring(0, 20));
+                audioState.isTTSPlaying = true;
+            };
+            
+            utter.onend = () => {
+                console.log('🔊 TTS 완료');
+                audioState.isTTSPlaying = false;
+                setTimeout(() => {
+                    if (!audioState.isTTSPlaying) {
+                        resumeRecognition();
+                    }
+                }, 1000); // 1초 후 음성인식 재개
+            };
+            
+            utter.onerror = (e) => {
+                console.warn('🔊 TTS 오류:', e);
+                audioState.isTTSPlaying = false;
                 resumeRecognition();
-            }
-        }, 3000);
-    };
-    
-    utter.onerror = () => {
-        console.warn('🔊 TTS 오류');
+            };
+            
+            speechSynthesis.speak(utter);
+        }, 100); // 100ms 지연
+        
+    } catch(e) {
+        console.warn('🔊 TTS 초기화 오류:', e);
         audioState.isTTSPlaying = false;
         resumeRecognition();
-    };
-    
-    speechSynthesis.speak(utter);
+    }
 };
 
 // === 채팅 (중복 방지 강화) ===
@@ -484,8 +530,14 @@ const sendChat = async () => {
         const data = await res.json();
         const responseText = cleanText(data.text);
         
+        console.log('🎤 AI 응답 받음:', responseText);
         addBubble('assistant', responseText);
-        speak(responseText);
+        
+        // TTS 강화 (음성 출력 보장)
+        setTimeout(() => {
+            console.log('🔊 TTS 시작 예약:', responseText.substring(0, 30));
+            speak(responseText, 1.1); // 볼륨 약간 높임
+        }, 300); // 300ms 지연으로 안정성 확보
         
     } catch(e) {
         addBubble('assistant', '서버 오류');
@@ -509,7 +561,7 @@ const startRecognition = () => {
     audioState.recognition.lang = 'ko-KR';
     audioState.recognition.interimResults = false;
     audioState.recognition.continuous = false;
-    audioState.recognition.maxAlternatives = 1;
+    audioState.recognition.maxAlternatives = 3;  // 더 많은 후보 고려
     
     audioState.recognition.onstart = () => {
         console.log('🎤 음성인식 시작');
@@ -517,52 +569,81 @@ const startRecognition = () => {
     };
     
     audioState.recognition.onresult = (e) => {
-        const transcript = e.results[e.results.length-1][0].transcript.trim();
-        console.log('🎤 음성인식 결과:', transcript);
+        // 모든 후보 결과 확인 (정확도 향상)
+        let bestTranscript = '';
+        let maxConfidence = 0;
+        
+        for (let i = 0; i < e.results[e.results.length-1].length; i++) {
+            const result = e.results[e.results.length-1][i];
+            if (result.confidence > maxConfidence) {
+                maxConfidence = result.confidence;
+                bestTranscript = result.transcript.trim();
+            }
+        }
+        
+        console.log('🎤 음성인식 결과:', bestTranscript, '신뢰도:', maxConfidence);
         
         const now = Date.now();
         if (audioState.lastTTSText && now - audioState.lastTTSTime < 5000) {
-            const similarity = transcript.length > 5 && 
-                             audioState.lastTTSText.includes(transcript.substring(0, 10));
+            const similarity = bestTranscript.length > 5 && 
+                             audioState.lastTTSText.includes(bestTranscript.substring(0, 10));
             if (similarity) {
-                console.log('🎤 에코 감지, 무시:', transcript);
+                console.log('🎤 에코 감지, 무시:', bestTranscript);
                 return;
             }
         }
         
-        // 음악 제어 명령어 처리 (안전한 단계에서만)
+        // GPT API 기반 음성 명령 처리 (안전한 단계에서만)
         const safeStages = ['정상', '의심경고', '집중모니터링', '개선'];
         if (safeStages.includes(lastStage)) {
-            const musicStartKeywords = ['음악', '노래', '틀어', '재생', '들려줘', '음악 틀어', '노래 틀어'];
-            const musicStopKeywords = ['음악 꺼', '음악 중지', '음악 멈춰', '노래 꺼', '노래 중지', '노래 멈춰', '그만', '꺼줘', '중지해', '멈춰줘'];
-            
-            // 디버깅 로그 추가
-            console.log('🎵 음성 명령 확인:', transcript);
+            console.log('🎵 음성 명령 확인:', bestTranscript);
             console.log('🎵 현재 배경음악 모드:', backgroundMusicMode);
             
-            const hasStartKeyword = musicStartKeywords.some(keyword => transcript.includes(keyword));
-            const hasStopKeyword = musicStopKeywords.some(keyword => transcript.includes(keyword));
-            
-            console.log('🎵 시작 키워드 감지:', hasStartKeyword);
-            console.log('🎵 중지 키워드 감지:', hasStopKeyword);
-            
-            if (hasStartKeyword && !backgroundMusicMode) {
-                console.log('🎵 음악 재생 요청 감지');
-                // 채팅창에 사용자 메시지 추가
-                addBubble('user', transcript, false);
-                startBackgroundMusic();
-                return; // 일반 채팅으로 보내지 않음
-            } else if (hasStopKeyword) { // backgroundMusicMode 조건 제거
-                console.log('🎵 음악 중지 요청 감지');
-                // 채팅창에 사용자 메시지 추가
-                addBubble('user', transcript, false);
-                stopBackgroundMusic();
-                return; // 일반 채팅으로 보내지 않음
-            }
+            // GPT API를 통한 지능형 음성 명령 분석
+            analyzeMusicCommand(bestTranscript).then(commandResult => {
+                if (commandResult.action === 'start_music' && !backgroundMusicMode) {
+                    console.log('🎵 AI가 음악 재생 요청으로 인식');
+                    addBubble('user', bestTranscript, false);
+                    startBackgroundMusic();
+                    return;
+                } else if (commandResult.action === 'stop_music') {
+                    console.log('🎵 AI가 음악 중지 요청으로 인식');
+                    addBubble('user', bestTranscript, false);
+                    stopBackgroundMusic();
+                    return;
+                } else if (commandResult.action === 'general_chat') {
+                    // 일반 대화로 처리
+                    if (bestTranscript.length > 1) {
+                        els.input.value = bestTranscript;
+                        userResponded = true;
+                        scheduleAutoSend();
+                    }
+                }
+            }).catch(error => {
+                console.warn('🎵 AI 명령 분석 실패, 기본 처리:', error);
+                // 기본 키워드 방식으로 폴백
+                const basicMusicStart = ['음악', '노래', '틀어', '재생'].some(k => bestTranscript.includes(k));
+                const basicMusicStop = ['꺼', '중지', '멈춰', '스톱'].some(k => bestTranscript.includes(k));
+                
+                if (basicMusicStart && !backgroundMusicMode) {
+                    addBubble('user', bestTranscript, false);
+                    startBackgroundMusic();
+                    return;
+                } else if (basicMusicStop) {
+                    addBubble('user', bestTranscript, false);
+                    stopBackgroundMusic();
+                    return;
+                } else if (bestTranscript.length > 1) {
+                    els.input.value = bestTranscript;
+                    userResponded = true;
+                    scheduleAutoSend();
+                }
+            });
+            return; // 비동기 처리이므로 여기서 리턴
         }
         
-        if (transcript.length > 1) {
-            els.input.value = transcript;
+        if (bestTranscript.length > 1) {
+            els.input.value = bestTranscript;
             userResponded = true;
             scheduleAutoSend();
         }
