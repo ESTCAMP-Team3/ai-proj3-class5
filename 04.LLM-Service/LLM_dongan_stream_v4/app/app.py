@@ -7,6 +7,14 @@ import json
 import random
 import traceback
 from threading import Thread
+import base64
+import requests
+from kafka import KafkaProducer
+import numpy as np
+import cv2
+from io import BytesIO
+from threading import Timer
+from stream_service import register_stream_service
 
 # 환경 변수 로드
 load_dotenv()
@@ -33,6 +41,23 @@ register_stream_service(app, url_prefix="/stream")
 
 # StateDBWatcher 초기화 (간단한 버전)
 state_watcher = None
+
+# Kafka Producer 및 스트림 버퍼 초기화
+kafka_producer = None
+stream_buffers = {}
+
+def init_kafka_producer():
+    """Kafka Producer 초기화"""
+    global kafka_producer
+    try:
+        kafka_producer = KafkaProducer(
+            bootstrap_servers=['kafka.dongango.com:9094'],
+            value_serializer=lambda v: json.dumps(v).encode('utf-8')
+        )
+        print("✅ Kafka Producer 초기화 성공")
+    except Exception as e:
+        print(f"⚠️ Kafka Producer 초기화 실패: {e}")
+        kafka_producer = None
 
 def init_state_watcher():
     """StateDBWatcher 초기화 (단순화)"""
@@ -158,7 +183,7 @@ def login():
             session["username"] = user["username"]
             
             print(f"✅ 로그인 성공: {username} (session: {session_token[:8]}...)")
-            return redirect("/stream_service")
+            return redirect("/drowny_service")  # 바로 스마트폰 UI로 이동
         else:
             return render_template("login.html", error="잘못된 사용자명 또는 비밀번호입니다")
     
@@ -214,51 +239,248 @@ def logout():
 
 @app.route("/stream/upload", methods=["POST"])
 def stream_upload():
-    """비디오 프레임 업로드 처리"""
+    """웹캠에서 전송된 JPEG를 처리하여 분석 서비스로 전달"""
     try:
         # 헤더에서 세션 정보 추출
         session_id = request.headers.get('X-Session-Id')
         seq = request.headers.get('X-Seq', '0')
         
         if not session_id:
-            return jsonify({"error": "No session ID"}), 400
+            return jsonify({"error": "Missing session ID"}), 400
         
-        # JPEG 데이터 받기
-        jpeg_data = request.data
+        # JPEG 데이터 읽기
+        jpeg_data = request.get_data()
+        if not jpeg_data:
+            return jsonify({"error": "No image data"}), 400
         
-        # TODO: 실제로는 이 데이터를 AI 모델로 전송하여 졸음 감지
-        # 여기서는 더미 응답
-        print(f"📷 Frame received: session={session_id}, seq={seq}, size={len(jpeg_data)} bytes")
+        print(f"� JPEG 수신: session={session_id}, seq={seq}, size={len(jpeg_data)} bytes")
         
-        # 더미 졸음 레벨 생성 (실제로는 AI 분석 결과)
-        dummy_level = random.choice([30, 30, 30, 40, 40, 50])  # 대부분 정상
-        
-        # 상태 업데이트 (로그인된 사용자만)
-        if "user_id" in session:
-            stage = stage_from_level(dummy_level)
-            insert_state_history(
-                user_id=session["user_id"],
-                session_token=session.get("session_token"),
-                level_code=dummy_level,
-                stage=stage
+        # 옵션 1: 분석 서비스로 직접 전송 (HTTP)
+        try:
+            # JPEG 분석 서비스 시작
+            analyzer_response = requests.post(
+                "http://localhost:8002/streams/start",
+                json={
+                    "topic": f"sess-{session_id}",
+                    "bootstrap_servers": "kafka.dongango.com:9094",
+                    "fps": 24.0,
+                    "width": 640,
+                    "height": 480
+                },
+                timeout=2
             )
             
-            # Socket.IO로 실시간 전송
-            socketio.emit('d_update', {
-                'D': dummy_level,
-                'stage': stage,
-                'timestamp': int(time.time())
-            }, room=f"user_{session.get('username')}")
+            if analyzer_response.status_code == 200:
+                print(f"✅ 분석 서비스 시작됨: {session_id}")
+        except Exception as e:
+            print(f"⚠️ 분석 서비스 연결 실패 (계속 진행): {e}")
+        
+        # 옵션 2: Kafka로 JPEG 전송
+        if kafka_producer:
+            try:
+                # JPEG를 Base64로 인코딩
+                jpeg_base64 = base64.b64encode(jpeg_data).decode('utf-8')
+                
+                # Kafka 메시지 구성
+                kafka_message = {
+                    "session_id": session_id,
+                    "seq": int(seq),
+                    "timestamp": int(time.time() * 1000),
+                    "image_base64": jpeg_base64,
+                    "size": len(jpeg_data)
+                }
+                
+                # Kafka 토픽으로 전송
+                topic_name = f"sess-{session_id}"
+                kafka_producer.send(topic_name, kafka_message)
+                kafka_producer.flush()
+                
+                print(f"📤 Kafka 전송 완료: topic={topic_name}, seq={seq}")
+                
+            except Exception as e:
+                print(f"⚠️ Kafka 전송 실패: {e}")
+        
+        # 옵션 3: 메모리 저장 + 실시간 분석
+        if session_id not in stream_buffers:
+            stream_buffers[session_id] = {
+                'frames': [],
+                'last_update': time.time(),
+                'frame_count': 0
+            }
+        
+        # 최근 30프레임만 유지
+        stream_buffers[session_id]['frames'].append({
+            'seq': int(seq),
+            'data': jpeg_data,
+            'timestamp': time.time()
+        })
+        
+        if len(stream_buffers[session_id]['frames']) > 30:
+            stream_buffers[session_id]['frames'].pop(0)
+        
+        stream_buffers[session_id]['last_update'] = time.time()
+        stream_buffers[session_id]['frame_count'] += 1
+        
+        # 10프레임마다 분석 수행
+        if stream_buffers[session_id]['frame_count'] % 10 == 0:
+            analyze_drowsiness(session_id, jpeg_data)
         
         return jsonify({
             "success": True,
             "saved": f"frame_{seq}",
-            "level": dummy_level
+            "session": session_id
         })
         
     except Exception as e:
-        print(f"❌ /stream/upload 오류: {e}")
+        print(f"❌ 스트림 업로드 오류: {e}")
         return jsonify({"error": str(e)}), 500
+
+# ============================================
+# 졸음 분석 및 스트림 관리 함수들
+# ============================================
+
+def analyze_drowsiness(session_id: str, jpeg_data: bytes):
+    """JPEG 이미지에서 졸음 분석 수행"""
+    try:
+        # OpenCV와 numpy 모듈이 없을 경우 간단한 더미 분석
+        try:
+            import cv2
+            import numpy as np
+            
+            # JPEG를 OpenCV 이미지로 변환
+            nparr = np.frombuffer(jpeg_data, np.uint8)
+            img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+            
+            if img is None:
+                return
+            
+            # 간단한 분석 (예: 이미지 밝기)
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            brightness = np.mean(gray)
+            
+            # 졸음 수준 계산 (임시 로직)
+            if brightness < 50:  # 너무 어두움
+                level_code = 70  # L1
+            elif brightness < 100:
+                level_code = 40  # 의심경고
+            else:
+                level_code = 30  # 정상
+                
+        except ImportError:
+            # OpenCV나 numpy가 없으면 더미 분석
+            level_code = random.choice([30, 30, 30, 40, 40, 50])
+        
+        # 세션 토큰 찾기
+        session_token = session.get('session_token')
+        if not session_token:
+            # stream_service에서 직접 온 경우
+            user_info = get_active_sessions()
+            if user_info:
+                session_token = user_info[0]['session_token']
+        
+        if session_token:
+            # DB에 상태 저장
+            stage = stage_from_level(level_code)
+            user_info = get_user_by_session_token(session_token)
+            if user_info:
+                insert_state_history(user_info['user_id'], session_token, level_code, stage)
+                
+                # Socket.IO로 실시간 전송
+                socketio.emit('d_update', {
+                    'D': level_code,
+                    'timestamp': int(time.time())
+                }, room=f"user_{user_info['username']}")
+                
+                print(f"🔍 분석 완료: session={session_id}, level={level_code}, stage={stage}")
+        
+    except Exception as e:
+        print(f"⚠️ 졸음 분석 실패: {e}")
+
+def start_analysis_service(session_id: str):
+    """JPEG 분석 서비스 시작"""
+    try:
+        # FastAPI 분석 서비스 호출
+        response = requests.post(
+            "http://localhost:8002/streams/start",
+            json={
+                "topic": f"sess-{session_id}",
+                "bootstrap_servers": "kafka.dongango.com:9094",
+                "fps": 24.0,
+                "width": 640,
+                "height": 480
+            }
+        )
+        
+        if response.status_code == 200:
+            print(f"✅ 분석 서비스 시작: {session_id}")
+            return True
+        else:
+            print(f"⚠️ 분석 서비스 시작 실패: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ 분석 서비스 연결 실패: {e}")
+        return False
+
+def stop_analysis_service(session_id: str):
+    """JPEG 분석 서비스 중지"""
+    try:
+        response = requests.post(
+            "http://localhost:8002/streams/stop",
+            json={"topic": f"sess-{session_id}"}
+        )
+        
+        if response.status_code == 200:
+            print(f"✅ 분석 서비스 중지: {session_id}")
+            return True
+        else:
+            print(f"⚠️ 분석 서비스 중지 실패: {response.text}")
+            return False
+            
+    except Exception as e:
+        print(f"❌ 분석 서비스 연결 실패: {e}")
+        return False
+
+def cleanup_old_streams():
+    """오래된 스트림 버퍼 정리"""
+    current_time = time.time()
+    to_remove = []
+    
+    for session_id, buffer in stream_buffers.items():
+        # 30초 이상 업데이트 없으면 제거
+        if current_time - buffer['last_update'] > 30:
+            to_remove.append(session_id)
+    
+    for session_id in to_remove:
+        del stream_buffers[session_id]
+        stop_analysis_service(session_id)
+        print(f"🧹 스트림 버퍼 정리: {session_id}")
+
+def schedule_cleanup():
+    """주기적 정리 스케줄러"""
+    cleanup_old_streams()
+    Timer(30.0, schedule_cleanup).start()
+
+# ============================================
+# 스트림 상태 확인 API
+# ============================================
+
+@app.route("/api/stream/<session_id>/status", methods=["GET"])
+def stream_status(session_id):
+    """스트림 상태 확인"""
+    if session_id in stream_buffers:
+        buffer = stream_buffers[session_id]
+        return jsonify({
+            "active": True,
+            "frame_count": buffer['frame_count'],
+            "last_update": buffer['last_update'],
+            "current_frames": len(buffer['frames'])
+        })
+    else:
+        return jsonify({
+            "active": False,
+            "message": "No active stream"
+        })
 
 @app.route("/api/analyze_voice_command", methods=["POST"])
 def analyze_voice_command():
@@ -967,6 +1189,10 @@ def handle_request_state_update():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 8000))
     debug = os.getenv("DEBUG", "1") == "1"
+    
+    # Kafka Producer 및 정리 스케줄러 초기화
+    init_kafka_producer()
+    schedule_cleanup()
     
     print("=" * 60)
     print("🚗💤 졸음 운전 방지 시스템 서버")
