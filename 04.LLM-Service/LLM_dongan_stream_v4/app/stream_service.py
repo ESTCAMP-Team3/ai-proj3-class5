@@ -8,7 +8,13 @@ import threading
 from datetime import datetime
 from pathlib import Path
 from typing import Optional, Dict, Any
-from confluent_kafka import Producer
+
+try:
+    from confluent_kafka import Producer
+    KAFKA_AVAILABLE = True
+except ImportError:
+    KAFKA_AVAILABLE = False
+    print("⚠️ confluent-kafka not available, using direct HTTP fallback")
 
 from flask import Blueprint, current_app, request, jsonify, abort
 
@@ -40,11 +46,17 @@ class _StreamServiceState:
 
 
         # --- Kafka Producer 초기화 ---
-        kafka_conf = {
-            "bootstrap.servers": "kafka.dongango.com:9094",
-        }
-        self.kafka_topic = "zolgima-control"
-        self.producer = Producer(kafka_conf)
+        if KAFKA_AVAILABLE:
+            kafka_conf = {
+                "bootstrap.servers": "kafka.dongango.com:9094",
+            }
+            self.kafka_topic = "zolgima-control"
+            self.producer = Producer(kafka_conf)
+            print(f"✅ Kafka producer initialized for {self.kafka_topic}")
+        else:
+            self.kafka_topic = None
+            self.producer = None
+            print("⚠️ Kafka producer disabled - using HTTP fallback")
 
     def _delivery_report(self, err, msg):
         if err is not None:
@@ -63,18 +75,53 @@ class _StreamServiceState:
             "session_token" : stream_state.session_token
         }
         data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+        
+        # Kafka가 사용 가능한 경우
+        if self.producer:
+            try:
+                self.producer.produce(
+                    topic=self.kafka_topic,
+                    key=key.encode("utf-8"),
+                    value=data,
+                    on_delivery=self._delivery_report
+                )
+                # 큐 비우기 (non-blocking)
+                self.producer.poll(0)
+                _log("Kafka produce queued", {"topic": self.kafka_topic, "key": key, "payload": payload})
+                return
+            except Exception as e:
+                _log("Kafka produce error", {"error": str(e), "key": key})
+        
+        # Kafka 없을 때 직접 HTTP 요청으로 대체
+        _log("Using HTTP fallback for control message", {"key": key, "session": session_id})
         try:
-            self.producer.produce(
-                topic=self.kafka_topic,
-                key=key.encode("utf-8"),
-                value=data,
-                on_delivery=self._delivery_report
-            )
-            # 큐 비우기 (non-blocking)
-            self.producer.poll(0)
-            _log("Kafka produce queued", {"topic": self.kafka_topic, "key": key, "payload": payload})
-        except Exception as e:
-            _log("Kafka produce error", {"error": str(e), "key": key})
+            import requests
+            import time
+            
+            if key == "start-stream":
+                jpeg_dir = f"C:/ai-proj3-class5/04.LLM-Service/LLM_dongan_stream_v4/app/data/outbox/{session_id}"
+                
+                def delayed_request():
+                    time.sleep(1)  # 파일 저장 시간 확보
+                    try:
+                        response = requests.post("http://localhost:8002/streams/start", json={
+                            "jpeg_dir": jpeg_dir,
+                            "kafka": {
+                                "bootstrap_servers": "kafka.dongango.com:9094"
+                            },
+                            "topic": f"sess-{session_id}",
+                            "fps": 30.0,
+                            "resume": True
+                        }, timeout=5)
+                        _log("HTTP stream start", {"status": response.status_code, "session": session_id})
+                    except Exception as e:
+                        _log("HTTP stream start failed", {"error": str(e), "session": session_id})
+                
+                # 백그라운드에서 실행
+                threading.Thread(target=delayed_request, daemon=True).start()
+                
+        except ImportError:
+            _log("requests not available for HTTP fallback", {"session": session_id})
 
     def ensure_dirs(self):
         self.INBOX_DIR.mkdir(parents=True, exist_ok=True)

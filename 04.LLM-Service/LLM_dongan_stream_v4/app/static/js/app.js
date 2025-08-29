@@ -11,7 +11,8 @@ const els = {
     // 카메라 요소들 추가
     cameraVideo: $('cameraPreview'),
     cameraCanvas: $('cameraCanvas'),
-    cameraStatus: $('cameraStatus')
+    cameraStatus: $('cameraStatus'),
+    frameCounter: $('frameCounter')
 };
 
 let userResponded = false, skipNext = null, timers = {}, alertLoop = null, lastStage = null;
@@ -25,6 +26,7 @@ const TARGET_FPS = 24;
 const FRAME_INTERVAL = 1000 / TARGET_FPS;
 let lastFrameTime = 0;
 let frameUploadBusy = false;
+let frameProcessedCount = 0; // 디버깅용 카운터
 
 // === 음성 상태 관리 (중복 및 에코 방지) ===
 let audioState = {
@@ -100,6 +102,12 @@ const initCamera = async () => {
         cameraActive = true;
         updateCameraStatus('카메라 연결됨', 'connected');
         
+        // 프레임 카운터 초기화
+        uploadSequence = 0;
+        if (els.frameCounter) {
+            els.frameCounter.textContent = `전송프레임: ${uploadSequence}`;
+        }
+        
         console.log('🎥 카메라 초기화 성공');
         
         // 프레임 업로드 시작
@@ -125,7 +133,34 @@ const stopCamera = () => {
 };
 
 const captureFrame = async () => {
-    if (!cameraActive || !els.cameraVideo || !els.cameraCanvas || frameUploadBusy) {
+    if (!cameraActive) {
+        console.warn('🎥 카메라가 비활성 상태입니다');
+        return null;
+    }
+    
+    if (!els.cameraVideo) {
+        console.warn('🎥 비디오 요소가 없습니다');
+        return null;
+    }
+    
+    if (!els.cameraCanvas) {
+        console.warn('🎥 캔버스 요소가 없습니다');
+        return null;
+    }
+    
+    if (frameUploadBusy) {
+        console.warn('🎥 이전 프레임 업로드가 진행중입니다');
+        return null;
+    }
+
+    // 비디오가 실제로 재생되고 있는지 확인
+    if (els.cameraVideo.readyState < 2) {
+        console.warn('🎥 비디오가 준비되지 않았습니다. readyState:', els.cameraVideo.readyState);
+        return null;
+    }
+    
+    if (els.cameraVideo.videoWidth === 0 || els.cameraVideo.videoHeight === 0) {
+        console.warn('🎥 비디오 크기가 0입니다:', els.cameraVideo.videoWidth, 'x', els.cameraVideo.videoHeight);
         return null;
     }
 
@@ -141,6 +176,12 @@ const captureFrame = async () => {
             canvas.toBlob(resolve, 'image/jpeg', 0.7);
         });
         
+        if (!blob) {
+            console.warn('🎥 blob 생성 실패');
+            return null;
+        }
+        
+        console.log('🎥 프레임 캡처 성공, blob 크기:', blob.size, 'bytes');
         return blob;
     } catch (error) {
         console.warn('🎥 프레임 캡처 실패:', error);
@@ -152,11 +193,14 @@ const uploadFrame = async (blob) => {
     if (!blob) return false;
 
     try {
+        // 시퀀스 증가 및 카운터 업데이트
+        uploadSequence++;
+        
         const response = await fetch('/stream/upload', {
             method: 'POST',
             headers: {
                 'X-Session-Id': cameraSessionId,
-                'X-Seq': String(uploadSequence++),
+                'X-Seq': String(uploadSequence),
                 'Content-Type': 'image/jpeg'
             },
             body: blob
@@ -165,6 +209,11 @@ const uploadFrame = async (blob) => {
         if (!response.ok) {
             console.warn('🎥 프레임 업로드 실패:', response.status);
             return false;
+        }
+
+        // 프레임 카운터 업데이트
+        if (els.frameCounter) {
+            els.frameCounter.textContent = `전송프레임: ${uploadSequence}`;
         }
 
         // 주기적으로 연결 상태 업데이트
@@ -180,20 +229,28 @@ const uploadFrame = async (blob) => {
 };
 
 const frameUploadLoop = async () => {
-    if (!cameraActive) return;
+    if (!cameraActive) {
+        console.log('🎥 카메라 비활성 상태, 업로드 루프 중단');
+        return;
+    }
 
     const now = performance.now();
     const deltaTime = now - lastFrameTime;
 
-    // 목표 FPS에 맞춰 프레임 처리
+    // FPS 조건을 완화하여 더 자주 처리
     if (deltaTime >= FRAME_INTERVAL && !frameUploadBusy) {
         frameUploadBusy = true;
         lastFrameTime = now;
+        frameProcessedCount++;
 
         try {
             const frameBlob = await captureFrame();
             if (frameBlob) {
+                console.log(`🎥 프레임 캡처 성공, 업로드 시도 중...`);
                 await uploadFrame(frameBlob);
+                console.log(`✅ 프레임 ${uploadSequence} 업로드 완료`);
+            } else {
+                console.warn('🎥 프레임 캡처 실패 - blob이 null');
             }
         } catch (error) {
             console.warn('🎥 프레임 처리 오류:', error);
@@ -202,9 +259,11 @@ const frameUploadLoop = async () => {
         }
     }
 
-    // 다음 프레임 스케줄링
+    // 다음 프레임 스케줄링 (항상 실행)
     if (cameraActive) {
         requestAnimationFrame(frameUploadLoop);
+    } else {
+        console.log('🎥 카메라 비활성화됨, 루프 종료');
     }
 };
 
@@ -979,15 +1038,44 @@ window.addEventListener('load', () => {
     startPolling(2000);
     
     // 카메라 자동 시작 (즉시 실행)
-    setTimeout(() => {
+    console.log('🎥 카메라 자동 시작 준비...');
+    
+    // DOM이 완전히 로드되었는지 확인
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(initCameraWithRetry, 500);
+        });
+    } else {
+        setTimeout(initCameraWithRetry, 500);
+    }
+    
+    // 카메라 초기화 재시도 함수
+    function initCameraWithRetry() {
+        console.log('🎥 카메라 초기화 시도...');
+        console.log('🎥 요소 상태:', {
+            video: !!els.cameraVideo,
+            canvas: !!els.cameraCanvas,
+            frameCounter: !!els.frameCounter
+        });
+        
         initCamera().then(success => {
             if (success) {
                 console.log('🎥 카메라가 자동으로 시작됨');
+                console.log('🎥 카메라 상태:', cameraActive);
+                console.log('🎥 업로드 시퀀스:', uploadSequence);
             } else {
-                console.warn('🎥 카메라 자동 시작 실패');
+                console.warn('🎥 카메라 자동 시작 실패, 3초 후 재시도...');
+                setTimeout(() => {
+                    console.log('🎥 카메라 재시도...');
+                    initCamera().then(success => {
+                        if (!success) {
+                            console.error('🎥 카메라 재시도도 실패했습니다');
+                        }
+                    });
+                }, 3000);
             }
         });
-    }, 1000); // 1초 후 자동 시작
+    }
     
     // 개발용 테스트 버튼 추가
     const testContainer = document.createElement('div');
