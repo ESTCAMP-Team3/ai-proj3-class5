@@ -1,0 +1,25 @@
+# 졸음운전 방지 시스템 - 필수 패키지
+
+# Flask 웹 프레임워크
+Flask==3.0.3
+Flask-SocketIO==5.3.6
+
+# 데이터베이스
+mysql-connector-python==9.0.0
+
+# 보안
+Werkzeug==3.0.3
+
+# AI/LLM (선택사항)
+openai==1.101.0
+
+# 환경설정
+python-dotenv==1.0.1
+
+# HTTP 요청
+requests>=2.31.0
+
+# Socket.IO 백엔드
+python-engineio>=4.9.0
+python-socketio>=5.10.0
+bidict>=0.22.0

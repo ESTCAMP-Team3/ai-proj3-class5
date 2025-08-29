@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>JPEG Frame Uploader (640x480 @ 24fps)</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 16px; }
+    .row { display:flex; gap:16px; align-items:flex-start; flex-wrap:wrap; }
+    video, canvas { width: 320px; height: 240px; background:#000; }
+    button { padding:8px 14px; border:1px solid #aaa; border-radius:8px; cursor:pointer; }
+    .pill { display:inline-block; padding:2px 8px; border-radius:999px; background:#e8eefc; border:1px solid #cad6ff; margin-left:8px; }
+    #log { white-space: pre-wrap; background:#f7f7f7; padding:8px; border:1px solid #ddd; border-radius:8px; margin-top:12px; max-height:220px; overflow:auto; }
+    label { display:block; margin-top:8px; }
+    input[type=range] { width:220px; vertical-align:middle; }
+  </style>
+</head>
+<body>
+  <h2>브라우저 → Flask (JPEG 프레임 전송)</h2>
+
+  <div class="row">
+    <div>
+      <video id="preview" autoplay playsinline muted></video>
+      <canvas id="stage" width="640" height="480" style="display:none;"></canvas>
+    </div>
+    <div>
+      <div>
+        <label>카메라 선택</label>
+        <select id="cameraSelect"></select>
+        <span class="pill" id="statFps">24 fps</span>
+      </div>
+      <div>
+        <label>JPEG 품질: <span id="qLabel">0.7</span></label>
+        <input id="qRange" type="range" min="0.4" max="0.95" step="0.05" value="0.7" />
+      </div>
+      <div style="margin-top:8px;">
+        <button id="btnStart">▶ 시작</button>
+        <button id="btnStop" disabled>■ 정지</button>
+      </div>
+      <div style="margin-top:8px;">
+        <small>세션ID: <code id="sid"></code> · 전송 프레임: <code id="sent">0</code></small>
+      </div>
+      <div style="margin-top:8px;">
+        <small>640×480, 목표 24fps · 전면 카메라 우선</small>
+      </div>
+    </div>
+  </div>
+
+  <div id="log"></div>
+
+  <!-- Socket.IO 라이브러리 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.2/socket.io.js"></script>
+  <script>
+    // Socket.IO 연결 및 상태 업데이트 처리
+    const socket = io();
+    
+    // 사용자 정보
+    let currentUser = null;
+    let currentSession = null;
+    let connectionAttempts = 0;
+    
+    function log(message) {
+        console.log(message);
+        const logDiv = document.getElementById('log');
+        if (logDiv) {
+            logDiv.textContent = (new Date().toLocaleTimeString()) + ' ' + message + '\n' + logDiv.textContent;
+            if (logDiv.textContent.length > 5000) {
+                logDiv.textContent = logDiv.textContent.substring(0, 5000);
+            }
+        }
+    }
+    
+    function attemptUserLogin() {
+        connectionAttempts++;
+        log(`🔄 로그인 시도 ${connectionAttempts}회...`);
+        
+        // 세션 정보를 서버에서 가져오기
+        fetch('/api/sessions')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('📋 세션 데이터:', data);
+                
+                if (data.sessions && data.sessions.length > 0) {
+                    // class5_3 사용자 우선 찾기
+                    let userSession = data.sessions.find(s => s.username === 'class5_3');
+                    
+                    // class5_3이 없으면 첫 번째 활성 사용자 사용
+                    if (!userSession) {
+                        userSession = data.sessions[0];
+                        log(`⚠️ class5_3 없음, ${userSession.username} 사용`);
+                    }
+                    
+                    currentUser = userSession.username;
+                    currentSession = userSession.session_token;
+                    
+                    log(`👤 사용자 확인: ${currentUser}`);
+                    
+                    // Socket.IO에 사용자 로그인 알림
+                    const loginData = {
+                        username: currentUser,
+                        session_token: currentSession
+                    };
+                    
+                    console.log('📤 로그인 데이터 전송:', loginData);
+                    socket.emit('user_login', loginData);
+                } else {
+                    log('❌ 활성 세션 없음');
+                    if (connectionAttempts < 3) {
+                        setTimeout(attemptUserLogin, 2000);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('❌ 세션 정보 가져오기 실패:', error);
+                log(`❌ 세션 로드 실패: ${error.message}`);
+                
+                if (connectionAttempts < 3) {
+                    setTimeout(attemptUserLogin, 2000);
+                }
+            });
+    }
+    
+    socket.on('connect', function() {
+        console.log('✅ Socket.IO 연결됨, SID:', socket.id);
+        log('🔗 서버 연결 완료');
+        connectionAttempts = 0;
+        
+        // 연결 후 잠시 대기 후 로그인 시도
+        setTimeout(attemptUserLogin, 500);
+    });
+    
+    socket.on('disconnect', function() {
+        console.log('❌ Socket.IO 연결 해제');
+        log('🔌 서버 연결 해제');
+        currentUser = null;
+        currentSession = null;
+    });
+    
+    socket.on('connection_status', function(data) {
+        console.log('📡 연결 상태:', data);
+        log(`📡 ${data.message}`);
+        
+        if (data.username) {
+            log(`👤 로그인: ${data.username} (${data.session_token})`);
+            if (data.room) {
+                log(`🏠 룸: ${data.room}`);
+            }
+            currentUser = data.username;
+        }
+    });
+    
+    socket.on('state_update', function(data) {
+        console.log('📊 상태 업데이트:', data);
+        
+        // 현재 사용자의 상태 업데이트인지 확인
+        if (currentUser && data.username === currentUser) {
+            log(`📊 내 상태: ${data.stage} (${data.level_code})`);
+            updateStateDisplay(data.stage, data.level_code);
+        } else if (!currentUser) {
+            // 사용자가 설정되지 않았으면 모든 상태 표시
+            log(`📊 상태: ${data.username} -> ${data.stage} (${data.level_code})`);
+            updateStateDisplay(data.stage, data.level_code);
+        } else {
+            // 다른 사용자의 상태는 간단히 로그만
+            log(`📊 ${data.username}: ${data.stage}`);
+        }
+    });
+    
+    socket.on('error', function(data) {
+        console.error('❌ Socket.IO 오류:', data);
+        log(`❌ 오류: ${data.message}`);
+        
+        // 로그인 관련 오류면 재시도
+        if (data.message.includes('session') || data.message.includes('login')) {
+            if (connectionAttempts < 3) {
+                setTimeout(attemptUserLogin, 3000);
+            }
+        }
+    });
+    
+    function updateStateDisplay(stage, level_code) {
+        // 상태에 따른 화면 색상 변경
+        const body = document.body;
+        body.classList.remove('normal', 'warning', 'danger', 'critical');
+        
+        if (level_code <= 40) {
+            body.classList.add('normal');
+        } else if (level_code <= 60) {
+            body.classList.add('warning');
+        } else if (level_code <= 80) {
+            body.classList.add('danger');
+        } else {
+            body.classList.add('critical');
+        }
+        
+        // 제목도 업데이트
+        document.title = `[${stage}] JPEG Frame Uploader`;
+        
+        // 상태 표시 업데이트
+        const stateDisplay = document.getElementById('currentState');
+        if (stateDisplay) {
+            stateDisplay.textContent = `${stage} (${level_code})`;
+        }
+    }
+    
+    // 페이지 로드 시 현재 상태 표시 요소 추가
+    document.addEventListener('DOMContentLoaded', function() {
+        const controls = document.querySelector('.row > div:nth-child(2)');
+        if (controls) {
+            const stateDiv = document.createElement('div');
+            stateDiv.style.marginTop = '8px';
+            stateDiv.innerHTML = '<small>현재 상태: <code id="currentState">연결 대기중...</code></small>';
+            controls.appendChild(stateDiv);
+        }
+    });
+  </script>
+  <style>
+    /* 상태별 배경색 */
+    body.normal { background-color: #f0f8f0; }
+    body.warning { background-color: #fff8e1; }
+    body.danger { background-color: #ffebee; }
+    body.critical { background-color: #ffcdd2; animation: blink 1s infinite; }
+    
+    @keyframes blink {
+        0%, 50% { background-color: #ffcdd2; }
+        51%, 100% { background-color: #f44336; }
+    }
+  </style>
+  <script src="/static/js/stream_service.js"></script>
+</body>
+</html>
