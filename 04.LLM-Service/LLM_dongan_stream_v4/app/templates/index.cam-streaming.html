@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Camera Stream (MediaRecorder)</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 16px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 12px; }
+    button, select { padding: 8px 12px; border-radius: 10px; border: 1px solid #ddd; }
+    #preview { width: 100%; max-width: 720px; background: #000; border-radius: 12px; }
+    .mirror { transform: scaleX(-1); }
+    .pill { padding: 4px 8px; border-radius: 999px; font-size: 12px; background:#f2f2f2; }
+    .warn { color: #b10f2e; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h2>카메라 전송 (640×360, 24fps 목표)</h2>
+
+  <div class="row">
+    <button id="btnStartCam">카메라 시작</button>
+    <button id="btnFront">전면</button>
+    <button id="btnBack">후면</button>
+    <select id="selDevice"></select>
+    <span class="pill" id="labCamInfo">-</span>
+  </div>
+
+  <div class="row">
+    <button id="btnStartStream">스트리밍 시작</button>
+    <button id="btnStopStream" disabled>스트리밍 중지</button>
+    <span class="pill">목표 fps: 24</span>
+    <span class="pill" id="labWs">WS: -</span>
+    <span class="pill" id="labBuf">buffered: 0</span>
+  </div>
+
+  <video id="preview" autoplay playsinline muted></video>
+  <canvas id="canvas" hidden></canvas>
+
+  <p id="httpsHint" class="warn"></p>
+
+  <script>
+    let stream = null;
+    let track = null;
+    let rec = null;
+    let ws = null;
+    let currentFacing = 'user'; // 'user' | 'environment'
+    let currentExt = 'mp4';     // iOS 기본 가정(mp4/h264), 크롬은 webm로 바뀜
+    let sid = 'cam1';
+
+    const $ = (id) => document.getElementById(id);
+    const $preview = $('preview');
+    const $labCamInfo = $('labCamInfo');
+    const $selDevice = $('selDevice');
+    const $labWs = $('labWs');
+    const $labBuf = $('labBuf');
+    const $httpsHint = $('httpsHint');
+
+    // HTTPS 체크(iOS는 신뢰된 인증서 필요)
+    // (function checkHttps(){
+    //   if (location.protocol !== 'https:' && location.hostname !== 'localhost') {
+    //     $httpsHint.textContent = 'iOS Safari에서는 HTTPS(신뢰된 인증서)가 아니면 카메라/녹화가 동작하지 않을 수 있습니다.';
+    //   }
+    // })();
+    // 개발용 HTTP 서버이므로 경고는 표시하지 않음(필요 시 되살리세요)
+    (function(){})();
+
+    function pickMime() {
+      // iOS Safari는 mp4/h264 선호, 크롬/안드로이드는 webm/vp8 선호
+      if (MediaRecorder.isTypeSupported('video/mp4;codecs=h264')) { currentExt = 'mp4'; return 'video/mp4;codecs=h264'; }
+      if (MediaRecorder.isTypeSupported('video/webm;codecs=vp8')) { currentExt = 'webm'; return 'video/webm;codecs=vp8'; }
+      // 마지막 폴백
+      currentExt = 'webm';
+      return '';
+    }
+
+    async function listCameras() {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const videos = devices.filter(d => d.kind === 'videoinput');
+      $selDevice.innerHTML = '';
+      videos.forEach((v, i) => {
+        const opt = document.createElement('option');
+        opt.value = v.deviceId;
+        opt.textContent = v.label || `camera ${i+1}`;
+        $selDevice.appendChild(opt);
+      });
+      // 현재 트랙 선택 반영
+      const s = track?.getSettings?.();
+      if (s?.deviceId) $selDevice.value = s.deviceId;
+    }
+
+    function camLabelFromSettings(s) {
+      const r = `${s.width||'-'}×${s.height||'-'} @${s.frameRate||'-'}fps`;
+      return `${s.facingMode||currentFacing} | ${r}`;
+    }
+
+    async function startCamera(opts = {}) {
+      // 기본: 640x360 @ 24fps 요청 (보장은 아님)
+      const base = {
+        width:  { exact: 640 },
+        height: { exact: 360 },
+        frameRate: { ideal: 24, max: 24 }
+      };
+      let video = { ...base, facingMode: currentFacing };
+
+      if (opts.deviceId) {
+        video = { ...base, deviceId: { exact: opts.deviceId } };
+      } else if (opts.facingMode) {
+        video = { ...base, facingMode: opts.facingMode };
+      }
+
+      // 기존 스트림 정리
+      if (stream) stream.getTracks().forEach(t => t.stop());
+      stream = await navigator.mediaDevices.getUserMedia({ video, audio: false });
+      track = stream.getVideoTracks()[0];
+      $preview.srcObject = stream;
+
+      // 전면이면 미러링
+      if ((track.getSettings?.().facingMode || currentFacing) === 'user') $preview.classList.add('mirror');
+      else $preview.classList.remove('mirror');
+
+      await listCameras();
+
+      const s = track.getSettings?.() || {};
+      $labCamInfo.textContent = camLabelFromSettings(s);
+    }
+
+    async function ensureCamera() {
+      if (!navigator.mediaDevices?.getUserMedia) {
+        throw new Error('getUserMedia 미지원 (HTTPS/브라우저/iOS 버전 확인)');
+      }
+      if (!stream) await startCamera();
+    }
+
+    function setWsLabel(txt) { $labWs.textContent = `WS: ${txt}`; }
+
+    const sendQueue = [];
+    let sending = false;
+
+    async function sendChunk(buf) {
+        sendQueue.push(buf);
+        if (sending) return;
+        sending = true;
+
+        try {
+            while (sendQueue.length && ws && ws.readyState === 1) {
+                const chunk = sendQueue[0];
+
+                // 백프레셔: 버퍼가 내려갈 때까지 잠깐씩 대기
+                while (ws.bufferedAmount > 1_000_000) {
+                await new Promise(r => setTimeout(r, 80));
+                $labBuf.textContent = `buffered: ${ws.bufferedAmount}`;
+                if (!ws || ws.readyState !== 1) break;
+                }
+                if (!ws || ws.readyState !== 1) break;
+
+                ws.send(chunk);
+                sendQueue.shift();
+                $labBuf.textContent = `buffered: ${ws.bufferedAmount}`;
+            }
+        } finally {
+            sending = false;
+        }
+    }
+
+    function startStreaming() {
+        if (!stream) return alert('먼저 카메라를 시작하세요.');
+        if (ws && ws.readyState === 1) return; // 이미 연결됨
+
+        const mime = pickMime();
+        const url  = `ws://${location.hostname}:8000/stream?sid=${encodeURIComponent(sid)}&ext=${encodeURIComponent(currentExt)}`;
+        // location.host 는 "hostname:port" 형태 (예: "localhost:8000")
+        // const url = `ws://${location.host}/stream?sid=${encodeURIComponent(sid)}&ext=${encodeURIComponent(currentExt)}`;
+
+        
+        ws = new WebSocket(url);
+        ws.binaryType = 'arraybuffer';
+
+        let pingTimer = null;
+        let partCnt = 0, totalBytes = 0;
+
+        ws.onopen = () => {
+            setWsLabel('open');
+
+            // 10초마다 ping (서버는 문자열은 무시)
+            pingTimer = setInterval(() => { try { ws.send('ping'); } catch(_) {} }, 10_000);
+
+            // 안정성 우선 시작 → 이후 정상 확인되면 올리세요(1.5~1.8Mbps / 250ms)
+            const opts = mime ? { mimeType: mime, videoBitsPerSecond: 1_200_000 }
+                            : { videoBitsPerSecond: 1_200_000 };
+            try {
+            rec = new MediaRecorder(stream, opts);
+            } catch (err) {
+            console.error('MediaRecorder init error:', err);
+            alert('브라우저가 해당 인코딩을 지원하지 않습니다. 다른 브라우저나 해상도/코덱을 시도하세요.');
+            return;
+            }
+
+            rec.ondataavailable = async (e) => {
+            if (!e.data || e.data.size === 0) return;
+            partCnt++; totalBytes += e.data.size;
+            // console.log(`[REC] #${partCnt} size=${e.data.size} total=${totalBytes}`);
+            const buf = await e.data.arrayBuffer();
+            if (ws && ws.readyState === 1) {
+                await sendChunk(buf);   // 🔴 드롭하지 않고 큐 전송
+            }
+            };
+
+            rec.onerror = (ev) => console.warn('MediaRecorder error', ev.error);
+
+            // 500ms 조각(안정성) → OK 확인되면 250ms로 낮춰보세요.
+            rec.start(500);
+            $('btnStopStream').disabled = false;
+        };
+
+        ws.onclose = (e) => {
+            if (pingTimer) clearInterval(pingTimer);
+            setWsLabel('closed');
+            if (rec && rec.state !== 'inactive') { try { rec.stop(); } catch(_) {} }
+            $('btnStopStream').disabled = true;
+            alert(`WebSocket 종료: code=${e.code}, reason=${e.reason || '(none)'} wasClean=${e.wasClean}`);
+        };
+
+        ws.onerror = (e) => {
+            console.error('WS error', e);
+            setWsLabel('error');
+            alert('WebSocket 오류: 연결이 거부되었거나 업그레이드에 실패했습니다. (페이지/WS 프로토콜·포트 확인)');
+        };
+    }
+
+    function stopStreaming() {
+      if (rec && rec.state !== 'inactive') { try { rec.stop(); } catch(_) {} }
+      if (ws && ws.readyState <= 1) { try { ws.close(); } catch(_) {} }
+      $('btnStopStream').disabled = true;
+    }
+
+    // 이벤트 바인딩
+    $('btnStartCam').onclick = async () => {
+      try { await ensureCamera(); }
+      catch (e) { alert('카메라 시작 실패: ' + e.message); console.error(e); }
+    };
+
+    $('btnFront').onclick = async () => {
+      try { currentFacing = 'user'; await startCamera({ facingMode: 'user' }); }
+      catch (e) { alert('전면 전환 실패: ' + e.message); }
+    };
+
+    $('btnBack').onclick = async () => {
+      try {
+        currentFacing = 'environment';
+        // 일부 브라우저는 exact가 실패 → ideal 힌트로 재시도
+        try { await startCamera({ facingMode: { exact: 'environment' } }); }
+        catch { await startCamera({ facingMode: 'environment' }); }
+      } catch (e) { alert('후면 전환 실패: ' + e.message); }
+    };
+
+    $selDevice.onchange = async (e) => {
+      try { await startCamera({ deviceId: e.target.value }); }
+      catch (ex) { alert('해당 카메라 선택 실패: ' + ex.message); }
+    };
+
+    $('btnStartStream').onclick = startStreaming;
+    $('btnStopStream').onclick = stopStreaming;
+
+    // 탭 닫힘/새로고침 시 정리
+    window.addEventListener('beforeunload', () => {
+      stopStreaming();
+      if (stream) stream.getTracks().forEach(t => t.stop());
+    });
+  </script>
+</body>
+</html>
