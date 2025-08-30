@@ -13,6 +13,9 @@ from storage import StateStore
 from metrics import MetricsTracker
 from config import EAR_CLOSED_TH, YAWN_MAR_TH, BLINK_MIN_CLOSED_FRAMES, RATE_WINDOW_SEC
 
+ear_sample = []
+mar_sample = []
+
 
 @dataclass
 class WorkerConfig:
@@ -35,6 +38,14 @@ class StreamWorker(threading.Thread):
         self.last_frame_idx: int = 0
         self.last_ts_ms: Optional[int] = None
         self.started_at_ms = int(time.time() * 1000)
+        self._ear_samples = []
+        self._mar_samples = []
+        self._calib_frames = 15  # 캘리브레이션 프레임 수
+        self._thresholds = {
+            "EAR_CLOSED_TH": EAR_CLOSED_TH,
+            "EAR_OPEN_TH": EAR_CLOSED_TH * 1.25,  # 열림 임계 (임의 설정)
+            "YAWN_MAR_TH": YAWN_MAR_TH,
+        }
 
         self._reader = JPEGFolderReader(
             cfg.jpeg_dir, FrameSpec(cfg.width, cfg.height, cfg.fps),
@@ -59,8 +70,8 @@ class StreamWorker(threading.Thread):
                 # We'll keep an independent monotonic frame counter for Kafka records.
         self._out_frame_idx = self.last_frame_idx + 1
 
-    def _build_metrics(self, res, ts_ms):
-        snap = self._tracker.update(res.ear_mean, res.mar, ts_ms)
+    def _build_metrics(self, res, ts_ms, threshold=None):
+        snap = self._tracker.update(res.ear_mean, res.mar, ts_ms, thresholds=threshold)
         return {
             "label_name": snap.label_name,
             "EAR": snap.EAR,
@@ -77,6 +88,19 @@ class StreamWorker(threading.Thread):
             "mar": res.mar,
             "face_found": res.face_found,
         }
+    
+    def _estimate_thresholds(self):
+        import numpy as np
+        ear_arr = np.array([v for v in self._ear_samples if v is not None])
+        mar_arr = np.array([v for v in self._mar_samples if v is not None])
+        # 예시: median 기반
+        ear_med = float(np.median(ear_arr)) if len(ear_arr) > 0 else self._thresholds["EAR_CLOSED_TH"]
+        mar_med = float(np.median(mar_arr)) if len(mar_arr) > 0 else self._thresholds["YAWN_MAR_TH"]
+        return {
+            "EAR_CLOSED_TH": ear_med * 0.85,  # 닫힘 임계
+            "EAR_OPEN_TH": ear_med * 1.05,    # 열림 임계(필요시)
+            "YAWN_MAR_TH": mar_med * 1.25,    # 하품 임계
+        }
         
     def stop(self):
         self._stop.set()
@@ -86,8 +110,19 @@ class StreamWorker(threading.Thread):
             for idx, ts_ms, frame, src_path in self._reader:
                 if self._stop.is_set():
                     break
-                # Analyze
-                res = self._an.analyze_frame(frame)
+
+                # 1. 항상 임계치로 분석/produce
+                res = self._an.analyze_frame(frame, thresholds=self._thresholds)
+                # 2. 캘리브레이션 샘플 쌓기
+                self._ear_samples.append(res.ear_mean)
+                self._mar_samples.append(res.mar)
+
+                # 3. 지정 프레임 쌓이면 임계치 갱신 (단 1회만)
+                if len(self._ear_samples) == self._calib_frames:
+                    self._thresholds = self._estimate_thresholds()
+                    self._tracker.ear_closed_th = self._thresholds["EAR_CLOSED_TH"]
+                    self._tracker.yawn_mar_th = self._thresholds["YAWN_MAR_TH"]
+
                 # Build record
                 record = {
                     "topic": self.cfg.topic,
@@ -95,7 +130,8 @@ class StreamWorker(threading.Thread):
                     "source_idx": idx,            # index from filename
                     "timestamp_ms": ts_ms,
                     "rel_time_sec": round((self._out_frame_idx-1) / self.cfg.fps, 6),
-                    "metrics": self._build_metrics(res, ts_ms),
+                    "metrics": self._build_metrics(res, ts_ms, threshold=self._thresholds),
+                    # (신규) 캘리브레이션으로 추정된 임계치 정보 포함
                 }
                 self._prod.produce_json(self.cfg.topic, record)
                 self.frames_emitted += 1

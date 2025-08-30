@@ -14,6 +14,11 @@ RIGHT_EYE = [263, 387, 385, 362, 380, 373]
 MOUTH_VERT = (13, 14)
 MOUTH_HORZ = (61, 291)
 
+EAR_LOW, EAR_HIGH = 0.18, 0.26
+MAR_HIGH = 0.60
+ear_samples = []
+mar_samples = []
+
 def _dist(p1: np.ndarray, p2: np.ndarray) -> float:
     return float(np.linalg.norm(p1 - p2))
 
