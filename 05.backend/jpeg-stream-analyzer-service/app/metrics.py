@@ -43,8 +43,15 @@ class MetricsTracker:
         while self._yawn_times and now_sec - self._yawn_times[0] > self.rate_window_sec:
             self._yawn_times.popleft()
 
-    def update(self, ear_mean: Optional[float], mar: Optional[float], ts_ms: int) -> MetricsSnapshot:
+    def update(self, ear_mean: Optional[float], mar: Optional[float], ts_ms: int, thresholds: Optional[dict] = None) -> MetricsSnapshot:
         now_sec = ts_ms / 1000.0
+
+        if thresholds is not None:
+            if "EAR_CLOSED_TH" in thresholds:
+                self.ear_closed_th = thresholds["EAR_CLOSED_TH"]
+            if "YAWN_MAR_TH" in thresholds:
+                self.yawn_mar_th = thresholds["YAWN_MAR_TH"]
+        # 앞서 캘리브
 
         # 눈 상태 판정 + blink 집계
         if ear_mean is not None and ear_mean < self.ear_closed_th:

@@ -19,4 +19,4 @@ MP_MIN_TRACK_CONF = 0.5
 EAR_CLOSED_TH = float(os.environ.get("EAR_CLOSED_TH", "0.21"))  # ear_mean < TH ⇒ eyes closed
 BLINK_MIN_CLOSED_FRAMES = int(os.environ.get("BLINK_MIN_CLOSED_FRAMES", "2"))
 YAWN_MAR_TH = float(os.environ.get("YAWN_MAR_TH", "0.60"))
-RATE_WINDOW_SEC = float(os.environ.get("RATE_WINDOW_SEC", "60.0"))  # per-minute 환산용 슬라이딩 윈도우
+RATE_WINDOW_SEC = float(os.environ.get("RATE_WINDOW_SEC", "20.0"))  # per-minute 환산용 슬라이딩 윈도우
